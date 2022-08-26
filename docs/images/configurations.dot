@@ -1,0 +1,15 @@
+digraph configurations {
+    node [shape=box]
+
+    compatDepApiCompileOnly -> commonCompileOnly;
+    compatDepXCompileOnly -> commonCompileOnly;
+    compatDepYCompileOnly -> commonCompileOnly;
+    compileOnly -> commonCompileOnly;
+    commonCompileOnly -> api;
+
+    compatDepApiImplementation -> commonImplementation;
+    compatDepXImplementation -> commonImplementation;
+    compatDepYImplementation -> commonImplementation;
+    implementation -> commonImplementation;
+    commonImplementation -> api;
+}

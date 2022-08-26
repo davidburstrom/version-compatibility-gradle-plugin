@@ -1,0 +1,8 @@
+digraph sourcesets {
+    test -> main
+    main -> compatDepApi
+    main -> compatDepX
+    main -> compatDepY
+    compatDepX -> compatDepApi
+    compatDepY -> compatDepApi
+}
