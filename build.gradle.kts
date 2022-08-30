@@ -23,7 +23,7 @@ configure<SpotlessExtension> {
 allprojects {
     afterEvaluate {
 
-        version = "0.1.0"
+        version = "0.2.0-SNAPSHOT"
         group = "io.github.davidburstrom.gradle.version-compatibility"
 
         apply(plugin = "com.diffplug.spotless")
@@ -106,8 +106,12 @@ allprojects {
 
 val verifyVersion = tasks.register("verifyVersion") {
     doLast {
-        project.file("README.md").readLines().filter { "version-compatibility" in it && "\"${project.version}\"" !in it }.forEach {
-            throw GradleException("Outdated version in README.md, could not find ${project.version} in $it")
+        if (!(version as String).endsWith("-SNAPSHOT")) {
+            project.file("README.md").readLines()
+                .filter { "version-compatibility" in it && "\"${project.version}\"" !in it }
+                .forEach {
+                    throw GradleException("Outdated version in README.md, could not find ${project.version} in $it")
+                }
         }
     }
 }
