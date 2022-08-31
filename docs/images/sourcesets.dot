@@ -1,7 +1,10 @@
 digraph sourcesets {
+    node [shape=box style=rounded]
+    edge [tailport=s headport=n]
+
     test -> main
-    main -> compatDepApi
     main -> compatDepX
+    main -> compatDepApi
     main -> compatDepY
     compatDepX -> compatDepApi
     compatDepY -> compatDepApi

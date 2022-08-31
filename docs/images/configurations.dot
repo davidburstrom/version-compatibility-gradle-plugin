@@ -1,5 +1,7 @@
 digraph configurations {
+    graph [ranksep=1]
     node [shape=box]
+    edge [tailport=s headport=n]
 
     compatDepApiCompileOnly -> commonCompileOnly;
     compatDepXCompileOnly -> commonCompileOnly;
