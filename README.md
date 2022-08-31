@@ -44,10 +44,10 @@ dependencies {
 The plugin will create a few source sets: `compatDepApi`, `compatDep1Dot0` and `compatDep3Dot0`.
 The `compatDepApi` source set should contain the interface through which the production code will call the
 compatibility adapters, and the `compatDep1Dot0` and `compatDep3Dot0` source sets should contain the implementations of said adapters.
-The those source sets depend on the output from `compatDepApi`, and the `main` source set depends on the output from all of them.
+Those source sets depend on the output from `compatDepApi`, and the `main` source set depends on the output from all of them.
 See the graph below for an overview:
 
-![Sourcesets](./docs/images/sourcesets.png "Sourcesets")
+![Sourcesets](./docs/images/sourcesets.svg "Sourcesets")
 
 The production code will have to select the proper adapter based on the runtime version of the dependency, for example
 by resolving the version through the classpath, or provided as a configuration parameter.
@@ -58,7 +58,7 @@ Since all source sets are likely to have some common dependencies, e.g. for Spot
 set up `commonImplementation` and `commonCompileOnly` configurations that the corresponding source set configurations depend on.
 See the graph below for an overview:
 
-![Configurations](./docs/images/configurations.png "Configurations")
+![Configurations](./docs/images/configurations.svg "Configurations")
 
 ### Compatibility test suites
 
@@ -113,7 +113,7 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 
 ## License
 
-Apache v2.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Copyright 2022 David Burström.
 
