@@ -117,6 +117,10 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 
 Copyright 2022 David Burström.
 
+## Acknowledgements
+
+* Erik Ghonyan, for improvements to the documentation.
+
 ## Future improvements
 
 * Support older versions of Gradle: 5.3 and up should be possible, but it requires wiring up the extension properties manually.
