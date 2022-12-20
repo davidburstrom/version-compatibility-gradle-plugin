@@ -39,7 +39,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 
     // This is a dependency used by all adapters
-    "commonImplementation"("org.checkerframework:checker-qual:3.23.0")
+    "commonImplementation"("org.checkerframework:checker-qual:3.28.0")
 
     // Each adapter depends on a specific version of commons-lang3
     "compatLang3Dot0CompileOnly"("org.apache.commons:commons-lang3:3.0")
