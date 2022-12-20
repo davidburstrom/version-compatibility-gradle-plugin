@@ -36,7 +36,7 @@ versionCompatibility {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 
     // This is a dependency used by all adapters
     "commonImplementation"("org.checkerframework:checker-qual:3.23.0")
