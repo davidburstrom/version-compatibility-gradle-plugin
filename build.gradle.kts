@@ -12,11 +12,11 @@ configure<SpotlessExtension> {
 
     kotlin {
         target("**/*.kt")
-        ktlint("0.46.1")
+        ktlint("0.47.1")
     }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktlint("0.46.1")
+        ktlint("0.47.1")
     }
 }
 
