@@ -61,7 +61,7 @@ allprojects {
             apply(plugin = "info.solidsoft.pitest")
             configure<PitestPluginExtension> {
                 pitestVersion.set("1.10.3")
-                junit5PluginVersion.set("1.0.0")
+                junit5PluginVersion.set("1.1.0")
                 timestampedReports.set(false)
                 targetClasses.set(
                     setOf(
