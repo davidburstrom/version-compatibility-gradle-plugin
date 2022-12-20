@@ -4,7 +4,7 @@ import info.solidsoft.gradle.pitest.PitestTask
 
 plugins {
     id("com.diffplug.spotless") version "6.12.0" apply false
-    id("info.solidsoft.pitest") version "1.7.4" apply false
+    id("info.solidsoft.pitest") version "1.9.11" apply false
 }
 
 apply(plugin = "com.diffplug.spotless")
