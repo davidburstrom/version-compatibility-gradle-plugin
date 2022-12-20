@@ -51,7 +51,7 @@ allprojects {
 
             apply(plugin = "pmd")
             configure<PmdExtension> {
-                toolVersion = "6.48.0"
+                toolVersion = "6.52.0"
                 isConsoleOutput = true
                 /* Disable default rules and provide specific ones. */
                 ruleSets = listOf()
