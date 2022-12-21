@@ -179,6 +179,22 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void commonConfigurationsAreDefined() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", ns -> ns.getVersions().add("1.0")));
+
+    assertThat(project.getConfigurations().findByName("commonImplementation")).isNotNull();
+    assertThat(project.getConfigurations().findByName("commonCompileOnly")).isNotNull();
+    assertThat(project.getConfigurations().findByName("testCommonImplementation")).isNotNull();
+    assertThat(project.getConfigurations().findByName("testCommonRuntimeOnly")).isNotNull();
+  }
+
+  @Test
   void commonConfigurationsExtendsFromApiIfAvailable() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");

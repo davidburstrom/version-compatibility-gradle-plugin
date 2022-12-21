@@ -88,6 +88,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               final Configuration commonImplementation =
                   createIfNecessary(
                       configurationContainer, "commonImplementation", apiConfiguration);
+              createIfNecessary(configurationContainer, "testCommonRuntimeOnly", null);
+              createIfNecessary(configurationContainer, "testCommonImplementation", null);
 
               extendSourceSetFromCommonConfigurations(
                   configurationContainer,
