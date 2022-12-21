@@ -22,7 +22,6 @@ import io.github.davidburstrom.gradle.versioncompatibility.VersionCompatibilityE
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.gradle.api.Action;
@@ -31,12 +30,13 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
-import org.gradle.api.tasks.SourceSetOutput;
+import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.testing.Test;
@@ -67,37 +67,12 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                     "No versions specified for " + namespace.getName());
               }
 
-              final String capitalizedNamespace = capitalize(namespace.getName());
-
-              final List<String> compatVersionSourceSetNames =
-                  versions.get().stream()
-                      .map(VersionCompatibilityExtensionImpl::unpunctuate)
-                      .map(version -> "compat" + capitalizedNamespace + version)
-                      .collect(Collectors.toList());
-
-              final List<String> allCompatSourceSetNames =
-                  new ArrayList<>(compatVersionSourceSetNames);
-              final String compatApiSourceSetName = "compat" + capitalizedNamespace + "Api";
-              allCompatSourceSetNames.add(compatApiSourceSetName);
-
+              final TaskContainer taskContainer = project.getTasks();
+              final ConfigurationContainer configurationContainer = project.getConfigurations();
+              final DependencyHandler dependencyHandler = project.getDependencies();
               final SourceSetContainer sourceSetContainer =
                   project.getExtensions().getByType(SourceSetContainer.class);
-
-              final List<String> compatVersionTestSourceSetNames =
-                  compatVersionSourceSetNames.stream()
-                      .map(VersionCompatibilityExtensionImpl::capitalize)
-                      .map(name -> "test" + name)
-                      .collect(Collectors.toList());
-              compatVersionTestSourceSetNames.forEach(sourceSetContainer::register);
-
-              final List<NamedDomainObjectProvider<SourceSet>> allCompatSourceSetProviders =
-                  allCompatSourceSetNames.stream()
-                      .map(sourceSetContainer::register)
-                      .collect(Collectors.toList());
-              final List<NamedDomainObjectProvider<SourceSet>> compatVersionSourceSetProviders =
-                  compatVersionSourceSetNames.stream()
-                      .map(sourceSetContainer::named)
-                      .collect(Collectors.toList());
+              final TaskProvider<Jar> jarTask = taskContainer.named("jar", Jar.class);
 
               final String targetSourceSetName =
                   namespace.getTargetSourceSetName().getOrElse("main");
@@ -105,65 +80,101 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               final NamedDomainObjectProvider<SourceSet> targetSourceSetProvider =
                   sourceSetContainer.named(targetSourceSetName);
 
-              final ConfigurationContainer configurations = project.getConfigurations();
+              final String capitalizedNamespace = capitalize(namespace.getName());
 
-              final Configuration apiConfiguration = configurations.findByName("api");
+              final Configuration apiConfiguration = configurationContainer.findByName("api");
               final Configuration commonCompileOnly =
-                  createIfNecessary(configurations, "commonCompileOnly", apiConfiguration);
+                  createIfNecessary(configurationContainer, "commonCompileOnly", apiConfiguration);
               final Configuration commonImplementation =
-                  createIfNecessary(configurations, "commonImplementation", apiConfiguration);
+                  createIfNecessary(
+                      configurationContainer, "commonImplementation", apiConfiguration);
 
-              Stream.concat(
-                      Stream.of(targetSourceSetProvider), allCompatSourceSetProviders.stream())
-                  .map(NamedDomainObjectProvider::get)
+              extendSourceSetFromCommonConfigurations(
+                  configurationContainer,
+                  targetSourceSetProvider,
+                  commonCompileOnly,
+                  commonImplementation);
+
+              String compatApiSourceSetName = "compat" + capitalizedNamespace + "Api";
+              final NamedDomainObjectProvider<SourceSet> compatApiSourceSetProvider =
+                  sourceSetContainer.register(compatApiSourceSetName);
+
+              extendSourceSetFromCommonConfigurations(
+                  configurationContainer,
+                  compatApiSourceSetProvider,
+                  commonCompileOnly,
+                  commonImplementation);
+
+              addOutputToImplementationConfiguration(
+                  dependencyHandler, compatApiSourceSetProvider, targetSourceSetProvider);
+
+              addOutputToJarTask(jarTask, compatApiSourceSetProvider);
+
+              versions
+                  .get()
                   .forEach(
-                      sourceSet -> {
-                        configurations
-                            .getByName(sourceSet.getCompileOnlyConfigurationName())
-                            .extendsFrom(commonCompileOnly);
-                        configurations
-                            .getByName(sourceSet.getImplementationConfigurationName())
-                            .extendsFrom(commonImplementation);
-                      });
+                      version -> {
+                        String unpunctuatedVersion = unpunctuate(version);
+                        String compatProductionSourceSetName =
+                            "compat" + capitalizedNamespace + unpunctuatedVersion;
+                        String compatTestSourceSetName =
+                            "testCompat" + capitalizedNamespace + unpunctuatedVersion;
 
-              compatVersionSourceSetProviders.stream()
-                  .map(NamedDomainObjectProvider::get)
-                  .forEach(
-                      sourceSet ->
-                          project
-                              .getDependencies()
-                              .add(
-                                  sourceSet.getImplementationConfigurationName(),
-                                  sourceSetContainer
-                                      .getByName(compatApiSourceSetName)
-                                      .getOutput()));
+                        final NamedDomainObjectProvider<SourceSet>
+                            compatProductionSourceSetProvider =
+                                sourceSetContainer.register(compatProductionSourceSetName);
+                        sourceSetContainer.register(compatTestSourceSetName);
 
-              allCompatSourceSetProviders.stream()
-                  .map(NamedDomainObjectProvider::get)
-                  .forEach(
-                      sourceSet ->
-                          project
-                              .getDependencies()
-                              .add(
-                                  targetSourceSetProvider
-                                      .get()
-                                      .getImplementationConfigurationName(),
-                                  sourceSet.getOutput()));
+                        addOutputToImplementationConfiguration(
+                            dependencyHandler,
+                            compatApiSourceSetProvider,
+                            compatProductionSourceSetProvider);
 
-              project
-                  .getTasks()
-                  .named(
-                      "jar",
-                      Jar.class,
-                      task -> {
-                        final List<SourceSetOutput> sourceSets =
-                            allCompatSourceSetProviders.stream()
-                                .map(NamedDomainObjectProvider::get)
-                                .map(SourceSet::getOutput)
-                                .collect(Collectors.toList());
-                        task.from(sourceSets);
+                        extendSourceSetFromCommonConfigurations(
+                            configurationContainer,
+                            compatProductionSourceSetProvider,
+                            commonCompileOnly,
+                            commonImplementation);
+
+                        addOutputToImplementationConfiguration(
+                            dependencyHandler,
+                            compatProductionSourceSetProvider,
+                            targetSourceSetProvider);
+
+                        addOutputToJarTask(jarTask, compatProductionSourceSetProvider);
                       });
             });
+  }
+
+  private static void addOutputToJarTask(
+      @Nonnull final TaskProvider<Jar> jarTask,
+      @Nonnull final NamedDomainObjectProvider<SourceSet> sourceSetProvider) {
+    jarTask.configure(t -> t.from(sourceSetProvider.get().getOutput()));
+  }
+
+  private static void addOutputToImplementationConfiguration(
+      final DependencyHandler dependencyHandler,
+      @Nonnull final NamedDomainObjectProvider<SourceSet> outputSourceSetProvider,
+      @Nonnull final NamedDomainObjectProvider<SourceSet> targetSourceSetProvider) {
+    dependencyHandler.add(
+        targetSourceSetProvider.get().getImplementationConfigurationName(),
+        outputSourceSetProvider.get().getOutput());
+  }
+
+  private static void extendSourceSetFromCommonConfigurations(
+      @Nonnull final ConfigurationContainer configurationContainer,
+      @Nonnull final NamedDomainObjectProvider<SourceSet> sourceSetProvider,
+      @Nonnull final Configuration commonCompileOnlyConfiguration,
+      @Nonnull final Configuration commonImplementationConfiguration) {
+    sourceSetProvider.configure(
+        sourceSet -> {
+          configurationContainer
+              .getByName(sourceSet.getCompileOnlyConfigurationName())
+              .extendsFrom(commonCompileOnlyConfiguration);
+          configurationContainer
+              .getByName(sourceSet.getImplementationConfigurationName())
+              .extendsFrom(commonImplementationConfiguration);
+        });
   }
 
   private Configuration createIfNecessary(

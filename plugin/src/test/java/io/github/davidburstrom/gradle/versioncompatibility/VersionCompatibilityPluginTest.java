@@ -17,18 +17,24 @@ package io.github.davidburstrom.gradle.versioncompatibility;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.truth.Correspondence;
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
+import java.util.function.Function;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.FileCollectionDependency;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceSetOutput;
+import org.gradle.jvm.tasks.Jar;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -433,5 +439,133 @@ class VersionCompatibilityPluginTest {
     assertThat(compatibilityTest.getGroup()).isEqualTo("verification");
     assertThat(compatibilityTest.getDescription()).isEqualTo("Runs all compatibility tests.");
     assertThat(compatibilityTest.getDependsOn()).isNotEmpty();
+  }
+
+  @Test
+  void addsCompatOutputsToJarTask() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+
+    Function<String, File> dummyClassCreator =
+        (sourceSetName) -> {
+          final File outputDir =
+              sourceSetContainer
+                  .getByName(sourceSetName)
+                  .getOutput()
+                  .getClassesDirs()
+                  .getSingleFile();
+          assertTrue(outputDir.mkdirs());
+          final File dummyClass = new File(outputDir, "dummy.class");
+          try {
+            assertTrue(dummyClass.createNewFile());
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+          return dummyClass;
+        };
+
+    final File compatApiDummyClass = dummyClassCreator.apply("compatApi");
+    final File compat1Dot0DummyClass = dummyClassCreator.apply("compat1Dot0");
+
+    final Jar jarTask = (Jar) project.getTasks().findByName("jar");
+    assertThat(jarTask).isNotNull();
+    assertThat(jarTask.getSource()).containsAtLeast(compatApiDummyClass, compat1Dot0DummyClass);
+  }
+
+  @Test
+  void addsCompatOutputsToTargetClasspath() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+
+    Function<String, File> dummyClassCreator =
+        (sourceSetName) ->
+            sourceSetContainer
+                .getByName(sourceSetName)
+                .getOutput()
+                .getClassesDirs()
+                .getSingleFile();
+
+    final File compatApiDummyClass = dummyClassCreator.apply("compatApi");
+    final File compat1Dot0DummyClass = dummyClassCreator.apply("compat1Dot0");
+
+    final Configuration mainImplementationClasspath =
+        project
+            .getConfigurations()
+            .getByName(sourceSetContainer.getByName("main").getCompileClasspathConfigurationName());
+
+    assertThat(mainImplementationClasspath).isNotNull();
+    assertThat(mainImplementationClasspath.getFiles())
+        .containsAtLeast(compatApiDummyClass, compat1Dot0DummyClass);
+  }
+
+  @Test
+  void targetSourceSetExtendsFromCommonConfigurations() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+
+    assertThat(
+            configurationContainer
+                .getByName(
+                    sourceSetContainer.getByName("main").getImplementationConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("commonImplementation"));
+    assertThat(
+            configurationContainer
+                .getByName(sourceSetContainer.getByName("main").getCompileOnlyConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("commonCompileOnly"));
+  }
+
+  @Test
+  void compatApiSourceSetExtendsFromCommonConfigurations() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+
+    assertThat(
+            configurationContainer
+                .getByName(
+                    sourceSetContainer.getByName("compatApi").getImplementationConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("commonImplementation"));
+    assertThat(
+            configurationContainer
+                .getByName(
+                    sourceSetContainer.getByName("compatApi").getCompileOnlyConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("commonCompileOnly"));
   }
 }
