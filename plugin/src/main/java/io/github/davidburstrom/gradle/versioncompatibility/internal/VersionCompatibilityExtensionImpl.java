@@ -66,19 +66,6 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                     "No versions specified for " + namespace.getName());
               }
 
-              final String targetSourceSetName =
-                  namespace.getTargetSourceSetName().getOrElse("main");
-              final String capitalizedNamespace = capitalize(namespace.getName());
-
-              final List<String> compatVersionSourceSetNames =
-                  versions.get().stream()
-                      .map(VersionCompatibilityExtensionImpl::unpunctuate)
-                      .map(version -> "compat" + capitalizedNamespace + version)
-                      .collect(Collectors.toList());
-
-              final SourceSetContainer sourceSetContainer =
-                  project.getExtensions().getByType(SourceSetContainer.class);
-
               final ConfigurationContainer configurations = project.getConfigurations();
 
               final Configuration commonCompileOnly;
@@ -96,10 +83,21 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                 commonImplementation = configurations.getByName("commonImplementation");
               }
 
+              final String capitalizedNamespace = capitalize(namespace.getName());
+
+              final List<String> compatVersionSourceSetNames =
+                  versions.get().stream()
+                      .map(VersionCompatibilityExtensionImpl::unpunctuate)
+                      .map(version -> "compat" + capitalizedNamespace + version)
+                      .collect(Collectors.toList());
+
               final List<String> allCompatSourceSetNames =
                   new ArrayList<>(compatVersionSourceSetNames);
               final String compatApiSourceSetName = "compat" + capitalizedNamespace + "Api";
               allCompatSourceSetNames.add(compatApiSourceSetName);
+
+              final SourceSetContainer sourceSetContainer =
+                  project.getExtensions().getByType(SourceSetContainer.class);
 
               final List<NamedDomainObjectProvider<SourceSet>> allCompatSourceSetProviders =
                   allCompatSourceSetNames.stream()
@@ -109,6 +107,9 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                   compatVersionSourceSetNames.stream()
                       .map(sourceSetContainer::named)
                       .collect(Collectors.toList());
+
+              final String targetSourceSetName =
+                  namespace.getTargetSourceSetName().getOrElse("main");
 
               final NamedDomainObjectProvider<SourceSet> targetSourceSetProvider =
                   sourceSetContainer.named(targetSourceSetName);
