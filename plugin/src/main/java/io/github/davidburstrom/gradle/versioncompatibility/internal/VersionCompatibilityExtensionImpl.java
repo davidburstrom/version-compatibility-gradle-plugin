@@ -88,14 +88,28 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               final Configuration commonImplementation =
                   createIfNecessary(
                       configurationContainer, "commonImplementation", apiConfiguration);
-              createIfNecessary(configurationContainer, "testCommonRuntimeOnly", null);
-              createIfNecessary(configurationContainer, "testCommonImplementation", null);
+              final Configuration testCommonRuntimeOnly =
+                  createIfNecessary(configurationContainer, "testCommonRuntimeOnly", null);
+              final Configuration testCommonImplementation =
+                  createIfNecessary(configurationContainer, "testCommonImplementation", null);
 
               extendSourceSetFromCommonConfigurations(
                   configurationContainer,
                   targetSourceSetProvider,
                   commonCompileOnly,
                   commonImplementation);
+
+              final NamedDomainObjectProvider<SourceSet> sourceSetProvider =
+                  sourceSetContainer.named("test");
+              sourceSetProvider.configure(
+                  sourceSet -> {
+                    configurationContainer
+                        .getByName(sourceSet.getRuntimeOnlyConfigurationName())
+                        .extendsFrom(testCommonRuntimeOnly);
+                    configurationContainer
+                        .getByName(sourceSet.getImplementationConfigurationName())
+                        .extendsFrom(testCommonImplementation);
+                  });
 
               String compatApiSourceSetName = "compat" + capitalizedNamespace + "Api";
               final NamedDomainObjectProvider<SourceSet> compatApiSourceSetProvider =

@@ -558,6 +558,33 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void testSourceSetExtendsFromCommonConfigurations() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+
+    assertThat(
+            configurationContainer
+                .getByName(
+                    sourceSetContainer.getByName("test").getImplementationConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("testCommonImplementation"));
+    assertThat(
+            configurationContainer
+                .getByName(sourceSetContainer.getByName("test").getRuntimeOnlyConfigurationName())
+                .getExtendsFrom())
+        .contains(configurationContainer.getByName("testCommonRuntimeOnly"));
+  }
+
+  @Test
   void compatApiSourceSetExtendsFromCommonConfigurations() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");
