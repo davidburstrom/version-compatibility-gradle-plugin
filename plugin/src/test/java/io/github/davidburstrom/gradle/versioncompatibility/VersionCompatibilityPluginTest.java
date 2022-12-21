@@ -55,6 +55,7 @@ class VersionCompatibilityPluginTest {
         project.getExtensions().getByType(SourceSetContainer.class);
     assertThat(sourceSetContainer.getByName("compatApi")).isNotNull();
     assertThat(sourceSetContainer.getByName("compat1Dot0")).isNotNull();
+    assertThat(sourceSetContainer.getByName("testCompat1Dot0")).isNotNull();
   }
 
   @Test
@@ -72,6 +73,7 @@ class VersionCompatibilityPluginTest {
         project.getExtensions().getByType(SourceSetContainer.class);
     assertThat(sourceSetContainer.getByName("compatDummyApi")).isNotNull();
     assertThat(sourceSetContainer.getByName("compatDummy1Dot0")).isNotNull();
+    assertThat(sourceSetContainer.getByName("testCompatDummy1Dot0")).isNotNull();
   }
 
   @Test

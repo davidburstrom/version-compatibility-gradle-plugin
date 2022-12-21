@@ -83,6 +83,13 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               final SourceSetContainer sourceSetContainer =
                   project.getExtensions().getByType(SourceSetContainer.class);
 
+              final List<String> compatVersionTestSourceSetNames =
+                  compatVersionSourceSetNames.stream()
+                      .map(VersionCompatibilityExtensionImpl::capitalize)
+                      .map(name -> "test" + name)
+                      .collect(Collectors.toList());
+              compatVersionTestSourceSetNames.forEach(sourceSetContainer::register);
+
               final List<NamedDomainObjectProvider<SourceSet>> allCompatSourceSetProviders =
                   allCompatSourceSetNames.stream()
                       .map(sourceSetContainer::register)
