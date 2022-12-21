@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Project;
@@ -66,23 +67,6 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                     "No versions specified for " + namespace.getName());
               }
 
-              final ConfigurationContainer configurations = project.getConfigurations();
-
-              final Configuration commonCompileOnly;
-              final Configuration commonImplementation;
-              if (configurations.findByName("commonCompileOnly") == null) {
-                commonCompileOnly = configurations.create("commonCompileOnly");
-                commonImplementation = configurations.create("commonImplementation");
-                final Configuration api = configurations.findByName("api");
-                if (api != null) {
-                  commonCompileOnly.extendsFrom(api);
-                  commonImplementation.extendsFrom(api);
-                }
-              } else {
-                commonCompileOnly = configurations.getByName("commonCompileOnly");
-                commonImplementation = configurations.getByName("commonImplementation");
-              }
-
               final String capitalizedNamespace = capitalize(namespace.getName());
 
               final List<String> compatVersionSourceSetNames =
@@ -113,6 +97,14 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
 
               final NamedDomainObjectProvider<SourceSet> targetSourceSetProvider =
                   sourceSetContainer.named(targetSourceSetName);
+
+              final ConfigurationContainer configurations = project.getConfigurations();
+
+              final Configuration apiConfiguration = configurations.findByName("api");
+              final Configuration commonCompileOnly =
+                  createIfNecessary(configurations, "commonCompileOnly", apiConfiguration);
+              final Configuration commonImplementation =
+                  createIfNecessary(configurations, "commonImplementation", apiConfiguration);
 
               Stream.concat(
                       Stream.of(targetSourceSetProvider), allCompatSourceSetProviders.stream())
@@ -165,6 +157,22 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                         task.from(sourceSets);
                       });
             });
+  }
+
+  private Configuration createIfNecessary(
+      @Nonnull final ConfigurationContainer configurationContainer,
+      @Nonnull final String configurationName,
+      @Nullable final Configuration optionalExtendee) {
+    Configuration result;
+    if (configurationContainer.findByName(configurationName) == null) {
+      result = configurationContainer.create(configurationName);
+      if (optionalExtendee != null) {
+        result.extendsFrom(optionalExtendee);
+      }
+    } else {
+      result = configurationContainer.getByName(configurationName);
+    }
+    return result;
   }
 
   @Override
