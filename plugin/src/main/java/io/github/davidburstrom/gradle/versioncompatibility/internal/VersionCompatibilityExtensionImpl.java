@@ -174,6 +174,16 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                                               .getImplementationConfigurationName()));
                             });
 
+                        compatTestSourceSetProvider.configure(
+                            sourceSet -> {
+                              configurationContainer
+                                  .getByName(sourceSet.getRuntimeOnlyConfigurationName())
+                                  .extendsFrom(testCommonRuntimeOnly);
+                              configurationContainer
+                                  .getByName(sourceSet.getImplementationConfigurationName())
+                                  .extendsFrom(testCommonImplementation);
+                            });
+
                         addOutputToJarTask(jarTask, compatProductionSourceSetProvider);
                       });
             });
