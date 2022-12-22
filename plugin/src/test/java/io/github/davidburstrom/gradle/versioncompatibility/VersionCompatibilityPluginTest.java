@@ -16,6 +16,7 @@
 package io.github.davidburstrom.gradle.versioncompatibility;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -685,6 +686,39 @@ class VersionCompatibilityPluginTest {
                     sourceSetContainer.getByName("compatApi").getCompileOnlyConfigurationName())
                 .getExtendsFrom())
         .contains(configurationContainer.getByName("commonCompileOnly"));
+  }
+
+  @Test
+  void createsCompatibilityAdapterTestsLifecycleTask() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+    final Task compatibilityTest = project.getTasks().findByName("testCompatibilityAdapters");
+    assertThat(compatibilityTest).isNotNull();
+    assertThat(compatibilityTest.getGroup()).isEqualTo("verification");
+    assertThat(compatibilityTest.getDescription())
+        .isEqualTo("Runs all compatibility adapter tests.");
+    assertThat(compatibilityTest.getDependsOn()).isNotEmpty();
+  }
+
+  @Test
+  void reusesPreviousCompatibilityAdapterTestsLifecycleTask() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("A", nc -> nc.getVersions().add("1.0")));
+    assertDoesNotThrow(
+        () -> {
+          extension.adapters(
+              ac -> ac.getNamespaces().register("B", nc -> nc.getVersions().add("1.0")));
+        });
   }
 
   private static File getOutputFolder(

@@ -46,6 +46,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   private final Project project;
 
   private boolean hasRegisteredTestLifecycleTask;
+  private boolean hasRegisteredCompatibilityAdapterTestLifecycleTask;
 
   public VersionCompatibilityExtensionImpl(@Nonnull Project project) {
     this.project = project;
@@ -56,6 +57,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
     final AdaptersConfig adaptersConfig = project.getObjects().newInstance(AdaptersConfig.class);
 
     action.execute(adaptersConfig);
+
+    final TaskProvider<Task> lifecycleTest = setupCompatibilityAdapterTestsLifecycleTask();
 
     adaptersConfig
         .getNamespaces()
@@ -184,19 +187,22 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                                   .extendsFrom(testCommonImplementation);
                             });
 
-                        taskContainer.register(
-                            compatTestSourceSetName,
-                            Test.class,
-                            test -> {
-                              test.setGroup("verification");
-                              test.setDescription(
-                                  "Runs the test suite for the "
-                                      + compatProductionSourceSetName
-                                      + " adapter.");
-                              final SourceSet sourceSet = compatTestSourceSetProvider.get();
-                              test.setTestClassesDirs(sourceSet.getOutput().getClassesDirs());
-                              test.setClasspath(sourceSet.getRuntimeClasspath());
-                            });
+                        final TaskProvider<Test> specificCompatibilityTest =
+                            taskContainer.register(
+                                compatTestSourceSetName,
+                                Test.class,
+                                test -> {
+                                  test.setGroup("verification");
+                                  test.setDescription(
+                                      "Runs the test suite for the "
+                                          + compatProductionSourceSetName
+                                          + " adapter.");
+                                  final SourceSet sourceSet = compatTestSourceSetProvider.get();
+                                  test.setTestClassesDirs(sourceSet.getOutput().getClassesDirs());
+                                  test.setClasspath(sourceSet.getRuntimeClasspath());
+                                });
+
+                        lifecycleTest.configure(t -> t.dependsOn(specificCompatibilityTest));
 
                         addOutputToJarTask(jarTask, compatProductionSourceSetProvider);
                       });
@@ -430,6 +436,21 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
             task -> {
               task.setGroup("verification");
               task.setDescription("Runs all compatibility tests.");
+            });
+  }
+
+  private TaskProvider<Task> setupCompatibilityAdapterTestsLifecycleTask() {
+    if (hasRegisteredCompatibilityAdapterTestLifecycleTask) {
+      return project.getTasks().named("testCompatibilityAdapters");
+    }
+    hasRegisteredCompatibilityAdapterTestLifecycleTask = true;
+    return project
+        .getTasks()
+        .register(
+            "testCompatibilityAdapters",
+            task -> {
+              task.setGroup("verification");
+              task.setDescription("Runs all compatibility adapter tests.");
             });
   }
 
