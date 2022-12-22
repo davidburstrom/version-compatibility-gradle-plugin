@@ -509,16 +509,8 @@ class VersionCompatibilityPluginTest {
     final SourceSetContainer sourceSetContainer =
         project.getExtensions().getByType(SourceSetContainer.class);
 
-    Function<String, File> dummyClassCreator =
-        (sourceSetName) ->
-            sourceSetContainer
-                .getByName(sourceSetName)
-                .getOutput()
-                .getClassesDirs()
-                .getSingleFile();
-
-    final File compatApiDummyClass = dummyClassCreator.apply("compatApi");
-    final File compat1Dot0DummyClass = dummyClassCreator.apply("compat1Dot0");
+    final File compatApiDummyClass = getOutputFolder(sourceSetContainer, "compatApi");
+    final File compat1Dot0DummyClass = getOutputFolder(sourceSetContainer, "compat1Dot0");
 
     final Configuration mainImplementationClasspath =
         project
@@ -585,6 +577,31 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void testSourceSetImplementationContainsCorrespondingProductionSourceSetOutputClasses() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+
+    final File compat1Dot0 = getOutputFolder(sourceSetContainer, "compat1Dot0");
+    final Set<File> testCompat1Dot0 =
+        configurationContainer
+            .getByName(
+                sourceSetContainer
+                    .getByName("testCompat1Dot0")
+                    .getCompileClasspathConfigurationName())
+            .getFiles();
+    assertThat(testCompat1Dot0).contains(compat1Dot0);
+  }
+
+  @Test
   void compatApiSourceSetExtendsFromCommonConfigurations() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");
@@ -610,5 +627,10 @@ class VersionCompatibilityPluginTest {
                     sourceSetContainer.getByName("compatApi").getCompileOnlyConfigurationName())
                 .getExtendsFrom())
         .contains(configurationContainer.getByName("commonCompileOnly"));
+  }
+
+  private static File getOutputFolder(
+      final SourceSetContainer sourceSetContainer, String sourceSetName) {
+    return sourceSetContainer.getByName(sourceSetName).getOutput().getClassesDirs().getSingleFile();
   }
 }

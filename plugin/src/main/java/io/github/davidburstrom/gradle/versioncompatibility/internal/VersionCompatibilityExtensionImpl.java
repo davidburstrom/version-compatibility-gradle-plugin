@@ -139,7 +139,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                         final NamedDomainObjectProvider<SourceSet>
                             compatProductionSourceSetProvider =
                                 sourceSetContainer.register(compatProductionSourceSetName);
-                        sourceSetContainer.register(compatTestSourceSetName);
+                        final NamedDomainObjectProvider<SourceSet> compatTestSourceSetProvider =
+                            sourceSetContainer.register(compatTestSourceSetName);
 
                         addOutputToImplementationConfiguration(
                             dependencyHandler,
@@ -156,6 +157,11 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                             dependencyHandler,
                             compatProductionSourceSetProvider,
                             targetSourceSetProvider);
+
+                        addOutputToImplementationConfiguration(
+                            dependencyHandler,
+                            compatProductionSourceSetProvider,
+                            compatTestSourceSetProvider);
 
                         addOutputToJarTask(jarTask, compatProductionSourceSetProvider);
                       });
