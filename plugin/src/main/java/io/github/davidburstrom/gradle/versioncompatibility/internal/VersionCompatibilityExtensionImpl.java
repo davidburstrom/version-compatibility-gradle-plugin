@@ -184,6 +184,20 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                                   .extendsFrom(testCommonImplementation);
                             });
 
+                        taskContainer.register(
+                            compatTestSourceSetName,
+                            Test.class,
+                            test -> {
+                              test.setGroup("verification");
+                              test.setDescription(
+                                  "Runs the test suite for the "
+                                      + compatProductionSourceSetName
+                                      + " adapter.");
+                              final SourceSet sourceSet = compatTestSourceSetProvider.get();
+                              test.setTestClassesDirs(sourceSet.getOutput().getClassesDirs());
+                              test.setClasspath(sourceSet.getRuntimeClasspath());
+                            });
+
                         addOutputToJarTask(jarTask, compatProductionSourceSetProvider);
                       });
             });

@@ -636,6 +636,30 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void adapterTestTasksAreCreatedAndWiredToClasspaths() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final Task testTask = project.getTasks().findByName("testCompat1Dot0");
+    assertThat(testTask).isNotNull();
+    assertThat(testTask.getGroup()).isEqualTo("verification");
+    assertThat(testTask.getDescription())
+        .isEqualTo("Runs the test suite for the compat1Dot0 adapter.");
+
+    final SourceSetContainer sourceSetContainer =
+        project.getExtensions().getByType(SourceSetContainer.class);
+    assertThat(((org.gradle.api.tasks.testing.Test) testTask).getTestClassesDirs())
+        .isEqualTo(sourceSetContainer.getByName("testCompat1Dot0").getOutput().getClassesDirs());
+    assertThat(((org.gradle.api.tasks.testing.Test) testTask).getClasspath())
+        .isEqualTo(sourceSetContainer.getByName("testCompat1Dot0").getRuntimeClasspath());
+  }
+
+  @Test
   void compatApiSourceSetExtendsFromCommonConfigurations() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");
