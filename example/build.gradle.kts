@@ -36,15 +36,22 @@ versionCompatibility {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
-
     // This is a dependency used by all adapters
     "commonImplementation"("org.checkerframework:checker-qual:3.28.0")
 
-    // Each adapter depends on a specific version of commons-lang3
+    // Both the regular test and the compatibility adapter tests require this
+    "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.9.1")
+
+    // Each adapter depends on a specific version of commons-lang3 to compile, but
+    // it cannot leak to the runtime classpath
     "compatLang3Dot0CompileOnly"("org.apache.commons:commons-lang3:3.0")
     "compatLang3Dot5CompileOnly"("org.apache.commons:commons-lang3:3.5")
     "compatLang3Dot10CompileOnly"("org.apache.commons:commons-lang3:3.10")
+
+    // Each adapter test must have its specific version of commons-lang3
+    "testCompatLang3Dot0RuntimeOnly"("org.apache.commons:commons-lang3:3.0")
+    "testCompatLang3Dot5RuntimeOnly"("org.apache.commons:commons-lang3:3.5")
+    "testCompatLang3Dot10RuntimeOnly"("org.apache.commons:commons-lang3:3.10")
 
     // Use latestVersion if no other dependency constraint exists, but nothing less than 3.0.
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")
@@ -60,4 +67,5 @@ tasks.named<Test>("test").configure {
 
 tasks.named("check").configure {
     dependsOn("compatibilityTest")
+    dependsOn("testCompatibilityAdapters")
 }
