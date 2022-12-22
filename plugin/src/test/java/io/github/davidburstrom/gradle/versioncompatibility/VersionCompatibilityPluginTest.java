@@ -602,6 +602,22 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void testSourceSetImplementationExtendsFromTheCorrespondingProductionImplementation() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
+
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+
+    assertThat(configurationContainer.getByName("testCompat1Dot0Implementation").getExtendsFrom())
+        .contains(configurationContainer.getByName("compat1Dot0Implementation"));
+  }
+
+  @Test
   void compatApiSourceSetExtendsFromCommonConfigurations() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");
