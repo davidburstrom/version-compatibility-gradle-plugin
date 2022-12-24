@@ -43,6 +43,8 @@ import org.gradle.api.tasks.testing.Test;
 
 public class VersionCompatibilityExtensionImpl implements VersionCompatibilityExtension {
 
+  private static final String COMPATIBILITY_TEST_TASK_NAME = "compatibilityTest";
+  private static final String TEST_COMPATIBILITY_ADAPTERS_TASK_NAME = "testCompatibilityAdapters";
   private final Project project;
 
   private boolean hasRegisteredTestLifecycleTask;
@@ -426,13 +428,13 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   @Nonnull
   private TaskProvider<Task> setupLifecycleCompatibilityTest() {
     if (hasRegisteredTestLifecycleTask) {
-      return project.getTasks().named("compatibilityTest");
+      return project.getTasks().named(COMPATIBILITY_TEST_TASK_NAME);
     }
     hasRegisteredTestLifecycleTask = true;
     return project
         .getTasks()
         .register(
-            "compatibilityTest",
+            COMPATIBILITY_TEST_TASK_NAME,
             task -> {
               task.setGroup("verification");
               task.setDescription("Runs all compatibility tests.");
@@ -441,13 +443,13 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
 
   private TaskProvider<Task> setupCompatibilityAdapterTestsLifecycleTask() {
     if (hasRegisteredCompatibilityAdapterTestLifecycleTask) {
-      return project.getTasks().named("testCompatibilityAdapters");
+      return project.getTasks().named(TEST_COMPATIBILITY_ADAPTERS_TASK_NAME);
     }
     hasRegisteredCompatibilityAdapterTestLifecycleTask = true;
     return project
         .getTasks()
         .register(
-            "testCompatibilityAdapters",
+            TEST_COMPATIBILITY_ADAPTERS_TASK_NAME,
             task -> {
               task.setGroup("verification");
               task.setDescription("Runs all compatibility adapter tests.");
