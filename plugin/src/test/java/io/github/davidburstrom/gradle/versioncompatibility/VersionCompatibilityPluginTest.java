@@ -33,6 +33,8 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.FileCollectionDependency;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceSetOutput;
 import org.gradle.jvm.tasks.Jar;
@@ -210,7 +212,7 @@ class VersionCompatibilityPluginTest {
     assertThat(extendsFrom)
         .comparingElementsUsing(
             Correspondence.transforming(Configuration::getName, "has a name of"))
-        .containsExactly("api");
+        .containsExactly(JavaPlugin.API_CONFIGURATION_NAME);
   }
 
   @Test
@@ -492,7 +494,7 @@ class VersionCompatibilityPluginTest {
     final File compatApiDummyClass = dummyClassCreator.apply("compatApi");
     final File compat1Dot0DummyClass = dummyClassCreator.apply("compat1Dot0");
 
-    final Jar jarTask = (Jar) project.getTasks().findByName("jar");
+    final Jar jarTask = (Jar) project.getTasks().findByName(JavaPlugin.JAR_TASK_NAME);
     assertThat(jarTask).isNotNull();
     assertThat(jarTask.getSource()).containsAtLeast(compatApiDummyClass, compat1Dot0DummyClass);
   }
@@ -516,7 +518,10 @@ class VersionCompatibilityPluginTest {
     final Configuration mainImplementationClasspath =
         project
             .getConfigurations()
-            .getByName(sourceSetContainer.getByName("main").getCompileClasspathConfigurationName());
+            .getByName(
+                sourceSetContainer
+                    .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                    .getCompileClasspathConfigurationName());
 
     assertThat(mainImplementationClasspath).isNotNull();
     assertThat(mainImplementationClasspath.getFiles())
@@ -540,12 +545,17 @@ class VersionCompatibilityPluginTest {
     assertThat(
             configurationContainer
                 .getByName(
-                    sourceSetContainer.getByName("main").getImplementationConfigurationName())
+                    sourceSetContainer
+                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                        .getImplementationConfigurationName())
                 .getExtendsFrom())
         .contains(configurationContainer.getByName("commonImplementation"));
     assertThat(
             configurationContainer
-                .getByName(sourceSetContainer.getByName("main").getCompileOnlyConfigurationName())
+                .getByName(
+                    sourceSetContainer
+                        .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                        .getCompileOnlyConfigurationName())
                 .getExtendsFrom())
         .contains(configurationContainer.getByName("commonCompileOnly"));
   }

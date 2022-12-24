@@ -33,6 +33,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.SetProperty;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -77,17 +78,19 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               final DependencyHandler dependencyHandler = project.getDependencies();
               final SourceSetContainer sourceSetContainer =
                   project.getExtensions().getByType(SourceSetContainer.class);
-              final TaskProvider<Jar> jarTask = taskContainer.named("jar", Jar.class);
+              final TaskProvider<Jar> jarTask =
+                  taskContainer.named(JavaPlugin.JAR_TASK_NAME, Jar.class);
 
               final String targetSourceSetName =
-                  namespace.getTargetSourceSetName().getOrElse("main");
+                  namespace.getTargetSourceSetName().getOrElse(SourceSet.MAIN_SOURCE_SET_NAME);
 
               final NamedDomainObjectProvider<SourceSet> targetSourceSetProvider =
                   sourceSetContainer.named(targetSourceSetName);
 
               final String capitalizedNamespace = capitalize(namespace.getName());
 
-              final Configuration apiConfiguration = configurationContainer.findByName("api");
+              final Configuration apiConfiguration =
+                  configurationContainer.findByName(JavaPlugin.API_CONFIGURATION_NAME);
               final Configuration commonCompileOnly =
                   createIfNecessary(configurationContainer, "commonCompileOnly", apiConfiguration);
               final Configuration commonImplementation =
@@ -105,7 +108,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                   commonImplementation);
 
               final NamedDomainObjectProvider<SourceSet> sourceSetProvider =
-                  sourceSetContainer.named("test");
+                  sourceSetContainer.named(SourceSet.TEST_SOURCE_SET_NAME);
               sourceSetProvider.configure(
                   sourceSet -> {
                     configurationContainer
@@ -262,7 +265,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   public void tests(@Nonnull Action<TestsConfig> action) {
     final TestsConfigImpl testConfigHandler =
         project.getObjects().newInstance(TestsConfigImpl.class);
-    testConfigHandler.getTestSourceSetName().convention("test");
+    testConfigHandler.getTestSourceSetName().convention(SourceSet.TEST_SOURCE_SET_NAME);
 
     List<String> dimensionNameOrder = new ArrayList<>();
     testConfigHandler
@@ -363,7 +366,9 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                * libraries.
                */
               final FileCollection mainRuntimeClasspath =
-                  sourceSetContainer.getByName("main").getRuntimeClasspath();
+                  sourceSetContainer
+                      .getByName(SourceSet.MAIN_SOURCE_SET_NAME)
+                      .getRuntimeClasspath();
 
               test.setTestClassesDirs(testClassesDirs);
 
