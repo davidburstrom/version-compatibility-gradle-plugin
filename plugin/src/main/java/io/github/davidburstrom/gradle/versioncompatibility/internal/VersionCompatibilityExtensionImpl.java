@@ -48,7 +48,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   private static final String TEST_COMPATIBILITY_ADAPTERS_TASK_NAME = "testCompatibilityAdapters";
   private final Project project;
 
-  private TaskProvider<Task> testLifecycleTask;
+  private TaskProvider<Task> compatibilityTestLifecycleTask;
   private TaskProvider<Task> compatibilityAdapterTestLifecycleTask;
 
   public VersionCompatibilityExtensionImpl(@Nonnull Project project) {
@@ -61,7 +61,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
 
     action.execute(adaptersConfig);
 
-    final TaskProvider<Task> lifecycleTest = setupCompatibilityAdapterTestsLifecycleTask();
+    final TaskProvider<Task> lifecycleTest = setupCompatibilityAdapterTestLifecycleTask();
 
     adaptersConfig
         .getNamespaces()
@@ -273,8 +273,9 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
         .whenObjectAdded(dimensionConfig -> dimensionNameOrder.add(dimensionConfig.getName()));
     action.execute(testConfigHandler);
 
-    final ConfigurationContainer configurations = project.getConfigurations();
-    final TaskProvider<Task> lifecycleCompatibilityTest = setupLifecycleCompatibilityTest();
+    final ConfigurationContainer configurationContainer = project.getConfigurations();
+    final TaskProvider<Task> compatibilityTestLifecycleTaskProvider =
+        setupCompatibilityTestLifecycleTask();
 
     final SourceSetContainer sourceSetContainer =
         project.getExtensions().getByType(SourceSetContainer.class);
@@ -293,15 +294,16 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
 
     for (List<NamedVersion> combinedVersion : combinedVersions) {
       String fullName =
-          createFullName(testConfigHandler.getTestSourceSetName().get(), combinedVersion);
+          createFullCompatibilityTestTaskName(
+              testConfigHandler.getTestSourceSetName().get(), combinedVersion);
 
       final Configuration specificCompatibilityTestRuntimeOnlyConfiguration =
-          configurations.create(fullName + "RuntimeOnly");
+          configurationContainer.create(fullName + "RuntimeOnly");
       final Configuration specificCompatibilityTestRuntimeClasspath =
-          configurations.create(fullName + "Classpath");
+          configurationContainer.create(fullName + "Classpath");
       specificCompatibilityTestRuntimeOnlyConfiguration.setCanBeResolved(false);
       specificCompatibilityTestRuntimeOnlyConfiguration.extendsFrom(
-          configurations.getByName(
+          configurationContainer.getByName(
               sourceSetContainer
                   .getByName(testConfigHandler.getTestSourceSetName().get())
                   .getRuntimeClasspathConfigurationName()));
@@ -331,7 +333,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
               versionList,
               testConfigHandler.getEachTestTaskAction());
 
-      lifecycleCompatibilityTest.configure(t -> t.dependsOn(specificCompatibilityTest));
+      compatibilityTestLifecycleTaskProvider.configure(t -> t.dependsOn(specificCompatibilityTest));
     }
   }
 
@@ -355,7 +357,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                   "Runs compatibility "
                       + testSourceSetName
                       + " with "
-                      + createFullDescription(combinedVersion)
+                      + createFullCompatibilityTestTaskDescription(combinedVersion)
                       + ".");
 
               final FileCollection testClassesDirs =
@@ -413,27 +415,31 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   }
 
   @Nonnull
-  private static String createFullName(
+  private static String createFullCompatibilityTestTaskName(
       final String testSourceSetName, @Nonnull List<NamedVersion> namedVersions) {
     return "compatibility"
         + capitalize(testSourceSetName)
         + "With"
         + namedVersions.stream()
-            .map(item -> unpunctuate(capitalize(item.getName())) + unpunctuate(item.getVersion()))
+            .map(
+                namedVersion ->
+                    unpunctuate(capitalize(namedVersion.getName()))
+                        + unpunctuate(namedVersion.getVersion()))
             .collect(Collectors.joining("And"));
   }
 
   @Nonnull
-  private static String createFullDescription(@Nonnull List<NamedVersion> namedVersions) {
+  private static String createFullCompatibilityTestTaskDescription(
+      @Nonnull List<NamedVersion> namedVersions) {
     return namedVersions.stream()
-        .map(item -> item.getName() + " " + item.getVersion())
+        .map(namedVersion -> namedVersion.getName() + " " + namedVersion.getVersion())
         .collect(Collectors.joining(" and "));
   }
 
   @Nonnull
-  private TaskProvider<Task> setupLifecycleCompatibilityTest() {
-    if (testLifecycleTask == null) {
-      testLifecycleTask =
+  private TaskProvider<Task> setupCompatibilityTestLifecycleTask() {
+    if (compatibilityTestLifecycleTask == null) {
+      compatibilityTestLifecycleTask =
           project
               .getTasks()
               .register(
@@ -443,10 +449,10 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                     task.setDescription("Runs all compatibility tests.");
                   });
     }
-    return testLifecycleTask;
+    return compatibilityTestLifecycleTask;
   }
 
-  private TaskProvider<Task> setupCompatibilityAdapterTestsLifecycleTask() {
+  private TaskProvider<Task> setupCompatibilityAdapterTestLifecycleTask() {
     if (compatibilityAdapterTestLifecycleTask == null) {
       compatibilityAdapterTestLifecycleTask =
           project
