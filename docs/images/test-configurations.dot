@@ -1,0 +1,23 @@
+digraph configurations {
+    graph [ranksep=1]
+    node [shape=box]
+    edge [tailport=s headport=n]
+
+    out1 [style=invis]
+    out2 [style=invis]
+    out3 [style=invis]
+
+    testCompatDepXImplementation -> compatDepXImplementation;
+    testCompatDepXImplementation -> testCommonImplementation;
+    testCompatDepYImplementation -> compatDepYImplementation;
+    testCompatDepYImplementation -> testCommonImplementation;
+    testImplementation -> testCommonImplementation;
+
+    compatDepXImplementation -> out1 [arrowhead=none style=dashed]
+    compatDepYImplementation -> out2 [arrowhead=none style=dashed]
+    testImplementation -> out3 [arrowhead=none style=dashed]
+
+    testCompatDepXRuntimeOnly -> testCommonRuntimeOnly;
+    testCompatDepYRuntimeOnly -> testCommonRuntimeOnly;
+    testRuntimeOnly -> testCommonRuntimeOnly;
+}

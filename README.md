@@ -60,6 +60,42 @@ See the graph below for an overview:
 
 ![Configurations](./docs/images/configurations.svg "Configurations")
 
+### Compatibility adapter test suites
+
+In order to test the compatibility adapters, the plugin also sets up test source sets and test tasks, one per
+version.
+
+Given the build script example above, the source sets `testCompatDep1Dot0` and `testCompatDep3Dot0` will be created.
+In each source set, add the corresponding code to test the compatibility adapter. The test
+tasks will be named `testCompatDep1Dot0` and `testCompatDep3Dot0`, with a lifecycle task `testCompatibilityAdapters`
+that depends on all of them.
+
+The test tasks will need to depend on the specific versions of the adapted library:
+
+```kotlin
+dependencies {
+    "testCompatDep1Dot0RuntimeOnly"("dep:dep:1.0")
+    "testCompatDep3Dot0RuntimeOnly"("dep:dep:3.0")
+}
+```
+
+It should be sufficient to add the adapted library to the test runtime classpath. In some cases, it
+might make sense to add it to the implementation classpath, for example if the test needs to reset
+some static state in the library.
+
+As both the compatibility test suites and the conventional test suite likely need the same
+test infrastructure, there are two configurations `testCommonImplementation` and `testCommonRuntimeOnly`
+that can be used to reduce duplication. See the build script and graph below for an overview:
+
+```kotlin
+dependencies {
+    "testCommonImplementation"("test:api:x.y")
+    "testCommonRuntimeOnly"("test:runtime:x.y")
+}
+```
+
+![Configurations](./docs/images/test-configurations.svg "Test Configurations")
+
 ### Compatibility test suites
 
 In order to test that the production code works well with any given version of a dependency, the plugin
