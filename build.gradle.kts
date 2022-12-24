@@ -74,6 +74,12 @@ allprojects {
                 mutators.set(listOf("DEFAULTS"))
                 useClasspathFile.set(true)
                 mutationThreshold.set(100)
+                if (JavaVersion.current() >= JavaVersion.VERSION_17) {
+                    jvmArgs.addAll(
+                        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                        "--add-opens=java.base/java.util=ALL-UNNAMED"
+                    )
+                }
 
                 tasks.named("build").configure {
                     dependsOn("pitest")
