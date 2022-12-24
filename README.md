@@ -145,6 +145,9 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 
 ## Releases
 
+* 0.2.0
+  * Added: Support for adapter test source generation
+  * Changed: "compatibilityTest" has been renamed to "testCompatibility"
 * 0.1.0 Initial release
 
 ## License
@@ -161,5 +164,4 @@ Copyright 2022 David Burström.
 
 * Support older versions of Gradle: 5.3 and up should be possible, but it requires wiring up the extension properties manually.
 * Support for adding bespoke dependencies to a compatibility test classpath.
-* Support for isolated unit testing of the compatibility adapters.
 
