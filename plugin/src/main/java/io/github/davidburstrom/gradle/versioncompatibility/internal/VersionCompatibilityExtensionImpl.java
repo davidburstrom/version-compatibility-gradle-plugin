@@ -48,8 +48,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   private static final String TEST_COMPATIBILITY_ADAPTERS_TASK_NAME = "testCompatibilityAdapters";
   private final Project project;
 
-  private boolean hasRegisteredTestLifecycleTask;
-  private boolean hasRegisteredCompatibilityAdapterTestLifecycleTask;
+  private TaskProvider<Task> testLifecycleTask;
+  private TaskProvider<Task> compatibilityAdapterTestLifecycleTask;
 
   public VersionCompatibilityExtensionImpl(@Nonnull Project project) {
     this.project = project;
@@ -432,33 +432,33 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
 
   @Nonnull
   private TaskProvider<Task> setupLifecycleCompatibilityTest() {
-    if (hasRegisteredTestLifecycleTask) {
-      return project.getTasks().named(COMPATIBILITY_TEST_TASK_NAME);
+    if (testLifecycleTask == null) {
+      testLifecycleTask =
+          project
+              .getTasks()
+              .register(
+                  COMPATIBILITY_TEST_TASK_NAME,
+                  task -> {
+                    task.setGroup("verification");
+                    task.setDescription("Runs all compatibility tests.");
+                  });
     }
-    hasRegisteredTestLifecycleTask = true;
-    return project
-        .getTasks()
-        .register(
-            COMPATIBILITY_TEST_TASK_NAME,
-            task -> {
-              task.setGroup("verification");
-              task.setDescription("Runs all compatibility tests.");
-            });
+    return testLifecycleTask;
   }
 
   private TaskProvider<Task> setupCompatibilityAdapterTestsLifecycleTask() {
-    if (hasRegisteredCompatibilityAdapterTestLifecycleTask) {
-      return project.getTasks().named(TEST_COMPATIBILITY_ADAPTERS_TASK_NAME);
+    if (compatibilityAdapterTestLifecycleTask == null) {
+      compatibilityAdapterTestLifecycleTask =
+          project
+              .getTasks()
+              .register(
+                  TEST_COMPATIBILITY_ADAPTERS_TASK_NAME,
+                  task -> {
+                    task.setGroup("verification");
+                    task.setDescription("Runs all compatibility adapter tests.");
+                  });
     }
-    hasRegisteredCompatibilityAdapterTestLifecycleTask = true;
-    return project
-        .getTasks()
-        .register(
-            TEST_COMPATIBILITY_ADAPTERS_TASK_NAME,
-            task -> {
-              task.setGroup("verification");
-              task.setDescription("Runs all compatibility adapter tests.");
-            });
+    return compatibilityAdapterTestLifecycleTask;
   }
 
   @Nonnull
