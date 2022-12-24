@@ -100,8 +100,8 @@ dependencies {
 
 In order to test that the production code works well with any given version of a dependency, the plugin
 extension object is used to define which versions to pull in. In the example below, the plugin
-defines three test tasks, `compatibilityTestWithMyDependency1Dot0`, `compatibilityTestWithMyDependency2Dot0`
-and `compatibilityTestWithMyDependency3Dot0` respectively.
+defines three test tasks, `testCompatibilityWithMyDependency1Dot0`, `testCompatibilityWithMyDependency2Dot0`
+and `testCompatibilityWithMyDependency3Dot0` respectively.
 
 ```kotlin
 plugins {
@@ -124,14 +124,14 @@ versionCompatibility {
 }
 ```
 
-The plugin will also create a lifecycle task called `compatibilityTest` which depends on all the compatibility test tasks.
+The plugin will also create a lifecycle task called `testCompatibility` which depends on all the compatibility test tasks.
 As the tests may take a substantial time to execute depending on the efficiency of the test implementations and the
 number of versions, it is not hooked up with the Gradle `check` or `build` lifecycle tasks by default.
 Either execute the task on demand, or wire it up explicitly, e.g.
 
 ```
 tasks.named("build").configure {
-    dependsOn(tasks.named("compatibilityTest"))
+    dependsOn(tasks.named("testCompatibility"))
 }
 ```
 

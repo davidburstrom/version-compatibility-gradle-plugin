@@ -55,6 +55,6 @@ tasks.withType<Test> {
 }
 
 tasks.named("check").configure {
-    dependsOn("compatibilityTest")
+    dependsOn("testCompatibility")
     dependsOn(functionalTest)
 }

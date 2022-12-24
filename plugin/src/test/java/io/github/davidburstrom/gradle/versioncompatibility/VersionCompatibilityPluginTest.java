@@ -279,25 +279,25 @@ class VersionCompatibilityPluginTest {
             compatibilityTestConfig
                 .getDimensions()
                 .register("dim", dc -> dc.getVersions().add("1.0")));
-    final org.gradle.api.tasks.testing.Test compatibilityTestWithDim1Dot0 =
+    final org.gradle.api.tasks.testing.Test compatibilityTestWithDim1Dot0Task =
         (org.gradle.api.tasks.testing.Test)
-            project.getTasks().findByName("compatibilityTestWithDim1Dot0");
-    assertThat(compatibilityTestWithDim1Dot0).isNotNull();
-    assertThat(compatibilityTestWithDim1Dot0.getGroup()).isEqualTo("verification");
-    assertThat(compatibilityTestWithDim1Dot0.getDescription())
+            project.getTasks().findByName("testCompatibilityWithDim1Dot0");
+    assertThat(compatibilityTestWithDim1Dot0Task).isNotNull();
+    assertThat(compatibilityTestWithDim1Dot0Task.getGroup()).isEqualTo("verification");
+    assertThat(compatibilityTestWithDim1Dot0Task.getDescription())
         .isEqualTo("Runs compatibility test with dim 1.0.");
 
     // Uses the project classes from the test source set
     project
         .getConfigurations()
-        .getByName("compatibilityTestWithDim1Dot0RuntimeOnly")
+        .getByName("testCompatibilityWithDim1Dot0RuntimeOnly")
         .getDependencies()
         .add(project.getDependencies().create(project.files("dummy")));
     final SourceSetContainer sourceSetContainer =
         project.getExtensions().getByType(SourceSetContainer.class);
-    assertThat(compatibilityTestWithDim1Dot0.getTestClassesDirs())
+    assertThat(compatibilityTestWithDim1Dot0Task.getTestClassesDirs())
         .isEqualTo(sourceSetContainer.getByName("test").getOutput().getClassesDirs());
-    assertThat(compatibilityTestWithDim1Dot0.getClasspath().getFiles()).hasSize(5);
+    assertThat(compatibilityTestWithDim1Dot0Task.getClasspath().getFiles()).hasSize(5);
   }
 
   @Test
@@ -317,7 +317,7 @@ class VersionCompatibilityPluginTest {
               .getDimensions()
               .register("dimB", dc -> dc.getVersions().add("1.0"));
         });
-    assertThat(project.getTasks().findByName("compatibilityTestWithDimA1Dot0AndDimB1Dot0"))
+    assertThat(project.getTasks().findByName("testCompatibilityWithDimA1Dot0AndDimB1Dot0"))
         .isNotNull();
 
     extension.tests(
@@ -329,7 +329,7 @@ class VersionCompatibilityPluginTest {
               .getDimensions()
               .register("dim2A", dc -> dc.getVersions().add("1.0"));
         });
-    assertThat(project.getTasks().findByName("compatibilityTestWithDim2B1Dot0AndDim2A1Dot0"))
+    assertThat(project.getTasks().findByName("testCompatibilityWithDim2B1Dot0AndDim2A1Dot0"))
         .isNotNull();
   }
 
@@ -349,13 +349,13 @@ class VersionCompatibilityPluginTest {
     assertThat(
             project
                 .getConfigurations()
-                .getByName("compatibilityTestWithDim1Dot0RuntimeOnly")
+                .getByName("testCompatibilityWithDim1Dot0RuntimeOnly")
                 .isCanBeResolved())
         .isFalse();
     assertThat(
             project
                 .getConfigurations()
-                .getByName("compatibilityTestWithDim1Dot0Classpath")
+                .getByName("testCompatibilityWithDim1Dot0Classpath")
                 .isCanBeResolved())
         .isTrue();
   }
@@ -379,7 +379,7 @@ class VersionCompatibilityPluginTest {
     assertThat(
             project
                 .getConfigurations()
-                .getByName("compatibilityTestWithDim1Dot0RuntimeOnly")
+                .getByName("testCompatibilityWithDim1Dot0RuntimeOnly")
                 .getDependencyConstraints())
         .containsExactly(project.getDependencies().getConstraints().create("a:b:1.0"));
   }
@@ -404,7 +404,7 @@ class VersionCompatibilityPluginTest {
           compatibilityTestConfig.eachTestRuntimeOnly(
               c -> c.addConstraint("a:b:" + c.getVersions().get(0)));
         });
-    assertThat(project.getTasks().getByName("compatibilityTestWithDim1Dot0").getDescription())
+    assertThat(project.getTasks().getByName("testCompatibilityWithDim1Dot0").getDescription())
         .isEqualTo("custom description for 1.0");
   }
 
@@ -426,16 +426,16 @@ class VersionCompatibilityPluginTest {
               .register("dim", dc -> dc.getVersions().add("1.0"));
           compatibilityTestConfig.getTestSourceSetName().set("functionalTest");
         });
-    final Task compatibilityTestWithDim1Dot0 =
-        project.getTasks().findByName("compatibilityFunctionalTestWithDim1Dot0");
-    assertThat(compatibilityTestWithDim1Dot0).isNotNull();
-    assertThat(compatibilityTestWithDim1Dot0.getGroup()).isEqualTo("verification");
-    assertThat(compatibilityTestWithDim1Dot0.getDescription())
+    final Task functionalCompatibilityTestWithDim1Dot0Task =
+        project.getTasks().findByName("functionalTestCompatibilityWithDim1Dot0");
+    assertThat(functionalCompatibilityTestWithDim1Dot0Task).isNotNull();
+    assertThat(functionalCompatibilityTestWithDim1Dot0Task.getGroup()).isEqualTo("verification");
+    assertThat(functionalCompatibilityTestWithDim1Dot0Task.getDescription())
         .isEqualTo("Runs compatibility functionalTest with dim 1.0.");
 
     // Uses the classes from the functionalTest source set
     assertThat(
-            ((org.gradle.api.tasks.testing.Test) compatibilityTestWithDim1Dot0)
+            ((org.gradle.api.tasks.testing.Test) functionalCompatibilityTestWithDim1Dot0Task)
                 .getTestClassesDirs())
         .isEqualTo(sourceSetContainer.getByName("functionalTest").getOutput().getClassesDirs());
   }
@@ -453,11 +453,12 @@ class VersionCompatibilityPluginTest {
             compatibilityTestConfig
                 .getDimensions()
                 .register("dim", dc -> dc.getVersions().add("1.0")));
-    final Task compatibilityTest = project.getTasks().findByName("compatibilityTest");
-    assertThat(compatibilityTest).isNotNull();
-    assertThat(compatibilityTest.getGroup()).isEqualTo("verification");
-    assertThat(compatibilityTest.getDescription()).isEqualTo("Runs all compatibility tests.");
-    assertThat(compatibilityTest.getDependsOn()).isNotEmpty();
+    final Task lifecycleCompatibilityTest = project.getTasks().findByName("testCompatibility");
+    assertThat(lifecycleCompatibilityTest).isNotNull();
+    assertThat(lifecycleCompatibilityTest.getGroup()).isEqualTo("verification");
+    assertThat(lifecycleCompatibilityTest.getDescription())
+        .isEqualTo("Runs all compatibility tests.");
+    assertThat(lifecycleCompatibilityTest.getDependsOn()).isNotEmpty();
   }
 
   @Test
@@ -707,12 +708,13 @@ class VersionCompatibilityPluginTest {
     final VersionCompatibilityExtension extension =
         project.getExtensions().getByType(VersionCompatibilityExtension.class);
     extension.adapters(ac -> ac.getNamespaces().register("", nc -> nc.getVersions().add("1.0")));
-    final Task compatibilityTest = project.getTasks().findByName("testCompatibilityAdapters");
-    assertThat(compatibilityTest).isNotNull();
-    assertThat(compatibilityTest.getGroup()).isEqualTo("verification");
-    assertThat(compatibilityTest.getDescription())
+    final Task lifecycleAdapterCompatibilityTest =
+        project.getTasks().findByName("testCompatibilityAdapters");
+    assertThat(lifecycleAdapterCompatibilityTest).isNotNull();
+    assertThat(lifecycleAdapterCompatibilityTest.getGroup()).isEqualTo("verification");
+    assertThat(lifecycleAdapterCompatibilityTest.getDescription())
         .isEqualTo("Runs all compatibility adapter tests.");
-    assertThat(compatibilityTest.getDependsOn()).isNotEmpty();
+    assertThat(lifecycleAdapterCompatibilityTest.getDependsOn()).isNotEmpty();
   }
 
   @Test

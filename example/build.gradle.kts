@@ -66,6 +66,6 @@ tasks.named<Test>("test").configure {
 }
 
 tasks.named("check").configure {
-    dependsOn("compatibilityTest")
+    dependsOn("testCompatibility")
     dependsOn("testCompatibilityAdapters")
 }

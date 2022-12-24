@@ -92,12 +92,12 @@ class VersionCompatibilityPluginFunctionalTest {
       runner.withGradleVersion(gradleVersion);
     }
     runner.withPluginClasspath();
-    runner.withArguments(":compatibilityTest");
+    runner.withArguments(":testCompatibility");
     runner.withProjectDir(projectDir);
     BuildResult result = runner.build();
 
     // Verify the result
-    assertTrue(result.getOutput().contains("Task :compatibilityTestWithDummy0Dot1"));
+    assertTrue(result.getOutput().contains("Task :testCompatibilityWithDummy0Dot1"));
   }
 
   @SuppressWarnings("PMD.AvoidFileStream")

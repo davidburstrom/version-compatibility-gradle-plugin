@@ -44,7 +44,7 @@ import org.gradle.api.tasks.testing.Test;
 
 public class VersionCompatibilityExtensionImpl implements VersionCompatibilityExtension {
 
-  private static final String COMPATIBILITY_TEST_TASK_NAME = "compatibilityTest";
+  private static final String COMPATIBILITY_TEST_TASK_NAME = "testCompatibility";
   private static final String TEST_COMPATIBILITY_ADAPTERS_TASK_NAME = "testCompatibilityAdapters";
   private final Project project;
 
@@ -417,9 +417,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
   @Nonnull
   private static String createFullCompatibilityTestTaskName(
       final String testSourceSetName, @Nonnull List<NamedVersion> namedVersions) {
-    return "compatibility"
-        + capitalize(testSourceSetName)
-        + "With"
+    return testSourceSetName
+        + "CompatibilityWith"
         + namedVersions.stream()
             .map(
                 namedVersion ->
