@@ -23,7 +23,7 @@ configure<SpotlessExtension> {
 allprojects {
     afterEvaluate {
 
-        version = "0.2.0-SNAPSHOT"
+        version = "0.2.0"
         group = "io.github.davidburstrom.gradle.version-compatibility"
 
         apply(plugin = "com.diffplug.spotless")

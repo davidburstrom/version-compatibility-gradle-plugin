@@ -24,7 +24,7 @@ As an example, some dependency "dep" has three releases 1.0, 2.0 and 3.0, but on
 
 ```kotlin
 plugins {
-    id("io.github.davidburstrom.version-compatibility") version "0.1.0"
+    id("io.github.davidburstrom.version-compatibility") version "0.2.0"
 }
 
 versionCompatibility {
@@ -105,7 +105,7 @@ and `testCompatibilityWithMyDependency3Dot0` respectively.
 
 ```kotlin
 plugins {
-    id("io.github.davidburstrom.version-compatibility") version "0.1.0"
+    id("io.github.davidburstrom.version-compatibility") version "0.2.0"
 }
 
 versionCompatibility {
