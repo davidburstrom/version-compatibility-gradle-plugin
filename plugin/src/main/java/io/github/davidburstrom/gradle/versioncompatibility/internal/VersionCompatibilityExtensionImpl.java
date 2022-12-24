@@ -362,8 +362,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                   sourceSetContainer.getByName(testSourceSetName).getOutput().getClassesDirs();
 
               /*
-               * The "test" runtime classpath cannot be used, as it's been contaminated with the most recent
-               * libraries.
+               * The "test" runtime classpath cannot be used, as it usually contains some
+               * fixed version(s) of the library/libraries.
                */
               final FileCollection mainRuntimeClasspath =
                   sourceSetContainer
