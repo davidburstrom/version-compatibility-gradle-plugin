@@ -148,6 +148,7 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 * 0.2.0
   * Added: Support for adapter test source generation
   * Changed: "compatibilityTest" has been renamed to "testCompatibility"
+  * Changed: Lifecycle tasks are always created when the plugin is applied
 * 0.1.0 Initial release
 
 ## License
