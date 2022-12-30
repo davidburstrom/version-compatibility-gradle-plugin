@@ -146,6 +146,7 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 ## Releases
 
 * 0.3.0
+  * Added: Support for Gradle 8.0
   * Fixed: Undeclared task dependency on test resource processing
 * 0.2.0
   * Added: Support for adapter test source generation
