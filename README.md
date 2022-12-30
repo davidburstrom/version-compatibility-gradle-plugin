@@ -145,6 +145,8 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 
 ## Releases
 
+* 0.3.0
+  * Fixed: Undeclared task dependency on test resource processing
 * 0.2.0
   * Added: Support for adapter test source generation
   * Changed: "compatibilityTest" has been renamed to "testCompatibility"

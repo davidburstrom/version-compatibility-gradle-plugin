@@ -379,6 +379,8 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                           .getByName(testSourceSetName)
                           .getOutput()
                           .getResourcesDir());
+              testResourcesDir.builtBy(
+                  sourceSetContainer.getByName(testSourceSetName).getProcessResourcesTaskName());
 
               test.setClasspath(
                   testClassesDirs

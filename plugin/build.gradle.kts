@@ -36,7 +36,7 @@ versionCompatibility {
     tests {
         dimensions {
             register("Gradle") {
-                versions.set(listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6"))
+                versions.set(listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0-rc-1"))
             }
         }
         testSourceSetName.set("functionalTest")

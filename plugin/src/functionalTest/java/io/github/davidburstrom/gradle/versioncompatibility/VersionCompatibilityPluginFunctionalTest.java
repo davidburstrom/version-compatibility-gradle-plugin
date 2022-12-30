@@ -56,7 +56,7 @@ class VersionCompatibilityPluginFunctionalTest {
             + "}");
 
     // Run the build
-    runAndVerifyOutput();
+    runAndVerifyOutput(":testCompatibility");
   }
 
   @Test
@@ -81,10 +81,35 @@ class VersionCompatibilityPluginFunctionalTest {
             + "}");
 
     // Run the build
-    runAndVerifyOutput();
+    runAndVerifyOutput(":testCompatibility");
   }
 
-  private void runAndVerifyOutput() {
+  @Test
+  void resourceOutputIsDeclared() throws IOException {
+    writeString(getSettingsFile(), "");
+    // language=kotlin
+    writeString(
+        new File(projectDir, "build.gradle.kts"),
+        "plugins {\n"
+            + "  java\n"
+            + "  id(\"io.github.davidburstrom.version-compatibility\")\n"
+            + "}\n"
+            + "versionCompatibility {\n"
+            + "  adapters {\n"
+            + "    namespaces.register(\"\") {\n"
+            + "      versions.set(listOf(\"1.0\"))\n"
+            + "    }\n"
+            + "  }\n"
+            + "  tests {\n"
+            + "    dimensions.register(\"dummy\") { versions.set(listOf(\"0.1\")) }\n"
+            + "  }\n"
+            + "}");
+    writeString(new File(projectDir, "src/test/java/Test.java"), "class Test { }");
+
+    runAndVerifyOutput(":processTestResources", ":testCompatibility");
+  }
+
+  private void runAndVerifyOutput(String... arguments) {
     GradleRunner runner = GradleRunner.create();
     runner.forwardOutput();
     final String gradleVersion = System.getProperty("GRADLE_VERSION");
@@ -92,7 +117,7 @@ class VersionCompatibilityPluginFunctionalTest {
       runner.withGradleVersion(gradleVersion);
     }
     runner.withPluginClasspath();
-    runner.withArguments(":testCompatibility");
+    runner.withArguments(arguments);
     runner.withProjectDir(projectDir);
     BuildResult result = runner.build();
 
@@ -102,6 +127,7 @@ class VersionCompatibilityPluginFunctionalTest {
 
   @SuppressWarnings("PMD.AvoidFileStream")
   private void writeString(File file, String string) throws IOException {
+    file.getParentFile().mkdirs();
     try (Writer writer = new FileWriter(file)) {
       writer.write(string);
     }
