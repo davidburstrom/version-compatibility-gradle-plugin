@@ -10,18 +10,15 @@ dependencies {
 }
 
 gradlePlugin {
+    website.set("https://github.com/davidburstrom/version-compatibility-gradle-plugin")
+    vcsUrl.set("https://github.com/davidburstrom/version-compatibility-gradle-plugin")
     plugins.register("plugin") {
         id = "io.github.davidburstrom.version-compatibility"
         implementationClass = "io.github.davidburstrom.gradle.versioncompatibility.VersionCompatibilityPlugin"
         displayName = "Version Compatibility Gradle Plugin"
+        description = "Sets up a compatibility test suite against given versions of one or more dependencies, and sets up source sets to create compatibility adapters for different versions of a dependency. This is useful in any context where the runtime dependencies of a program is a matter of configuration, e.g. when integrating a 3rd party tool in a software suite."
+        tags.set(listOf("versions", "compatibility", "dependencies", "testing", "adapter"))
     }
-}
-
-pluginBundle {
-    website = "https://github.com/davidburstrom/version-compatibility-gradle-plugin"
-    vcsUrl = "https://github.com/davidburstrom/version-compatibility-gradle-plugin"
-    tags = listOf("versions", "compatibility", "dependencies", "testing", "adapter")
-    description = "Sets up a compatibility test suite against given versions of one or more dependencies, and sets up source sets to create compatibility adapters for different versions of a dependency. This is useful in any context where the runtime dependencies of a program is a matter of configuration, e.g. when integrating a 3rd party tool in a software suite."
 }
 
 val functionalTestSourceSet: SourceSet = sourceSets.create("functionalTest")
