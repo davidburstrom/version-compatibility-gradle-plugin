@@ -85,7 +85,9 @@ some static state in the library.
 
 As both the compatibility test suites and the conventional test suite likely need the same
 test infrastructure, there are two configurations `testCommonImplementation` and `testCommonRuntimeOnly`
-that can be used to reduce duplication. See the build script and graph below for an overview:
+that can be used to reduce duplication. The `testImplementation`/`testRuntimeOnly` and
+`testCompat*Implementation`/`testCompat*RuntimeOnly` configurations extend the common ones accordingly.
+See the build script and graph below for an overview:
 
 ```kotlin
 dependencies {
