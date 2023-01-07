@@ -32,7 +32,7 @@ allprojects {
             if (plugins.hasPlugin(JavaPlugin::class.java)) {
                 java {
                     googleJavaFormat("1.7")
-                    licenseHeaderFile(rootProject.file("license-header.txt"))
+                    licenseHeaderFile(rootProject.file("config/license-header.txt"))
                 }
             }
         }
