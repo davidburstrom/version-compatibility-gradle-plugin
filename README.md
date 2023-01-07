@@ -172,7 +172,7 @@ In contexts where `'.'` and `'-'` characters are illegal, they will be replaced 
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-Copyright 2022 David Burström.
+Copyright 2022-2023 David Burström.
 
 ## Acknowledgements
 
