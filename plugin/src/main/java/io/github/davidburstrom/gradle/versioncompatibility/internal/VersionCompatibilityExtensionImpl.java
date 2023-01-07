@@ -150,6 +150,22 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                         final NamedDomainObjectProvider<SourceSet> compatTestSourceSetProvider =
                             sourceSetContainer.register(compatTestSourceSetName);
 
+                        final Configuration compileAndTestOnlyConfiguration =
+                            configurationContainer.create(
+                                compatProductionSourceSetName + "CompileAndTestOnly");
+
+                        compatProductionSourceSetProvider.configure(
+                            sourceSet ->
+                                configurationContainer
+                                    .getByName(sourceSet.getCompileOnlyConfigurationName())
+                                    .extendsFrom(compileAndTestOnlyConfiguration));
+
+                        compatTestSourceSetProvider.configure(
+                            sourceSet ->
+                                configurationContainer
+                                    .getByName(sourceSet.getImplementationConfigurationName())
+                                    .extendsFrom(compileAndTestOnlyConfiguration));
+
                         addOutputToImplementationConfiguration(
                             dependencyHandler,
                             compatApiSourceSetProvider,

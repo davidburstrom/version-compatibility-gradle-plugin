@@ -1,17 +1,24 @@
 digraph configurations {
     graph [ranksep=1]
     node [shape=box]
-    edge [tailport=s headport=n]
+    edge [tailport=s headport=n dir=back]
 
-    compatDepApiCompileOnly -> commonCompileOnly;
-    compatDepXCompileOnly -> commonCompileOnly;
-    compatDepYCompileOnly -> commonCompileOnly;
-    compileOnly -> commonCompileOnly;
-    commonCompileOnly -> api;
+    api [style="filled" fillcolor="lightblue"]
+    compileOnly [style="filled" fillcolor="lightblue"]
+    implementation [style="filled" fillcolor="lightblue"]
+    "commonCompileOnly" [style="bold,filled" fillcolor="lightblue"]
+    "commonImplementation" [style="bold,filled" fillcolor="lightblue"]
+    "compatDep*CompileAndTestOnly" [style="bold,striped" fillcolor="lightblue:lightgreen"]
+    "compatDep*CompileOnly" [style="bold,filled" fillcolor="lightblue"]
+    "compatDep*Implementation" [style="bold,filled" fillcolor="lightblue"]
 
-    compatDepApiImplementation -> commonImplementation;
-    compatDepXImplementation -> commonImplementation;
-    compatDepYImplementation -> commonImplementation;
-    implementation -> commonImplementation;
-    commonImplementation -> api;
+    commonCompileOnly -> "compatDep*CompileOnly"
+    commonCompileOnly -> compileOnly
+    api -> commonCompileOnly
+    "compatDep*CompileAndTestOnly" -> "compatDep*CompileOnly"
+
+    commonImplementation -> "compatDep*Implementation"
+    commonImplementation -> implementation
+    api -> commonImplementation
+
 }

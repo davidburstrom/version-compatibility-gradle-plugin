@@ -1,23 +1,30 @@
 digraph configurations {
     graph [ranksep=1]
     node [shape=box]
-    edge [tailport=s headport=n]
+    edge [tailport=s headport=n dir=back]
 
-    out1 [style=invis]
-    out2 [style=invis]
-    out3 [style=invis]
+    production [label="" style="dashed,filled" fillcolor="lightblue"]
+    implementation [style="filled" fillcolor="lightblue"]
+    testImplementation [style="filled" fillcolor="lightgreen"]
+    testRuntimeOnly [style="filled" fillcolor="lightgreen"]
+    testCommonRuntimeOnly [style="bold,filled" fillcolor="lightgreen"]
+    testCommonImplementation [style="bold,filled" fillcolor="lightgreen"]
+    "testCompatDep*RuntimeOnly" [style="bold,filled" fillcolor="lightgreen"]
+    "testCompatDep*Implementation" [style="bold,filled" fillcolor="lightgreen"]
+    "compatDep*Implementation" [style="bold,filled" fillcolor="lightblue"]
+    "compatDep*CompileAndTestOnly" [style="bold,striped" fillcolor="lightblue:lightgreen"]
 
-    testCompatDepXImplementation -> compatDepXImplementation;
-    testCompatDepXImplementation -> testCommonImplementation;
-    testCompatDepYImplementation -> compatDepYImplementation;
-    testCompatDepYImplementation -> testCommonImplementation;
-    testImplementation -> testCommonImplementation;
+    "compatDep*Implementation" -> "testCompatDep*Implementation"
+    "compatDep*CompileAndTestOnly" -> "testCompatDep*Implementation"
+    testCommonImplementation -> "testCompatDep*Implementation"
+    testCommonImplementation -> testImplementation
+    implementation -> testCommonImplementation [style=invis]
+    implementation -> testCommonRuntimeOnly [style=invis]
 
-    compatDepXImplementation -> out1 [arrowhead=none style=dashed]
-    compatDepYImplementation -> out2 [arrowhead=none style=dashed]
-    testImplementation -> out3 [arrowhead=none style=dashed]
+    production -> "compatDep*Implementation"
+    production -> implementation
+    implementation -> testImplementation
 
-    testCompatDepXRuntimeOnly -> testCommonRuntimeOnly;
-    testCompatDepYRuntimeOnly -> testCommonRuntimeOnly;
-    testRuntimeOnly -> testCommonRuntimeOnly;
+    testCommonRuntimeOnly -> "testCompatDep*RuntimeOnly"
+    testCommonRuntimeOnly -> testRuntimeOnly
 }

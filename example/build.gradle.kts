@@ -22,15 +22,23 @@ versionCompatibility {
                     )
                 )
             }
+
+            // Shows that it is possible to add a test matrix, where the test task can be
+            // wired up to run against a given release of Java (though not implemented here).
+            register("Java") {
+                versions.set(listOf("1.8", "11"))
+            }
         }
 
         eachTestRuntimeOnly {
-            addConstraint("org.apache.commons:commons-lang3:${versions[0]}!!")
+            val (commonsLangVersion, javaVersion) = versions
+            addConstraint("org.apache.commons:commons-lang3:$commonsLangVersion!!")
         }
 
         // Used to test that the correct commons-lang3 version is resolved automatically
         eachTestTask {
-            testTask.systemProperty("COMMONS_LANG_VERSION", versions[0])
+            val (commonsLangVersion, javaVersion) = versions
+            testTask.systemProperty("COMMONS_LANG_VERSION", commonsLangVersion)
         }
     }
 }
@@ -42,16 +50,11 @@ dependencies {
     // Both the regular test and the compatibility adapter tests require this
     "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.9.1")
 
-    // Each adapter depends on a specific version of commons-lang3 to compile, but
-    // it cannot leak to the runtime classpath
-    "compatLang3Dot0CompileOnly"("org.apache.commons:commons-lang3:3.0")
-    "compatLang3Dot5CompileOnly"("org.apache.commons:commons-lang3:3.5")
-    "compatLang3Dot10CompileOnly"("org.apache.commons:commons-lang3:3.10")
-
-    // Each adapter test must have its specific version of commons-lang3
-    "testCompatLang3Dot0RuntimeOnly"("org.apache.commons:commons-lang3:3.0")
-    "testCompatLang3Dot5RuntimeOnly"("org.apache.commons:commons-lang3:3.5")
-    "testCompatLang3Dot10RuntimeOnly"("org.apache.commons:commons-lang3:3.10")
+    // Each adapter depends on a specific version of commons-lang3, which will be used to
+    // compile the production sources and run the tests, but won't leak to the runtime classpath
+    "compatLang3Dot0CompileAndTestOnly"("org.apache.commons:commons-lang3:3.0")
+    "compatLang3Dot5CompileAndTestOnly"("org.apache.commons:commons-lang3:3.5")
+    "compatLang3Dot10CompileAndTestOnly"("org.apache.commons:commons-lang3:3.10")
 
     // Use latestVersion if no other dependency constraint exists, but nothing less than 3.0.
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")

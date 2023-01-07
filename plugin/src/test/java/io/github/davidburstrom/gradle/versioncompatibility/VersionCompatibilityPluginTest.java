@@ -263,7 +263,43 @@ class VersionCompatibilityPluginTest {
     assertThat(extendsFrom)
         .comparingElementsUsing(
             Correspondence.transforming(Configuration::getName, "has a name of"))
-        .containsExactly("commonCompileOnly");
+        .contains("commonCompileOnly");
+  }
+
+  @Test
+  void versionSourceSetsExtendsFromCompileAndTestOnlyConfiguration() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", ns -> ns.getVersions().add("1.0")));
+
+    final Set<Configuration> extendsFrom =
+        project.getConfigurations().getByName("compat1Dot0CompileOnly").getExtendsFrom();
+    assertThat(extendsFrom)
+        .comparingElementsUsing(
+            Correspondence.transforming(Configuration::getName, "has a name of"))
+        .contains("compat1Dot0CompileAndTestOnly");
+  }
+
+  @Test
+  void versionTestSourceSetsExtendsFromCompileAndTestOnlyConfiguration() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.adapters(ac -> ac.getNamespaces().register("", ns -> ns.getVersions().add("1.0")));
+
+    final Set<Configuration> extendsFrom =
+        project.getConfigurations().getByName("testCompat1Dot0Implementation").getExtendsFrom();
+    assertThat(extendsFrom)
+        .comparingElementsUsing(
+            Correspondence.transforming(Configuration::getName, "has a name of"))
+        .contains("compat1Dot0CompileAndTestOnly");
   }
 
   @Test

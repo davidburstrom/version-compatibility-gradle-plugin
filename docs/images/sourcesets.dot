@@ -1,11 +1,16 @@
 digraph sourcesets {
-    node [shape=box style=rounded]
-    edge [tailport=s headport=n]
+    node [shape=box style="rounded,filled"]
+    edge [tailport=s headport=n dir=back]
 
-    test -> main
-    main -> compatDepX
-    main -> compatDepApi
-    main -> compatDepY
-    compatDepX -> compatDepApi
-    compatDepY -> compatDepApi
+    "compatDep*" [style="bold,rounded,filled" fillcolor=lightblue]
+    compatDepApi [style="bold,rounded,filled" fillcolor=lightblue]
+    main [fillcolor=lightblue]
+    test [fillcolor=lightgreen]
+    "testCompatDep*" [style="bold,rounded,filled" fillcolor=lightgreen]
+
+    "compatDep*" -> main
+    compatDepApi -> main
+    compatDepApi -> "compatDep*"
+    main -> test
+    "compatDep*" -> "testCompatDep*"
 }
