@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
     testImplementation("com.google.truth:truth:1.1.3")
 }
 

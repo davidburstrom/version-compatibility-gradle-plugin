@@ -48,7 +48,7 @@ dependencies {
     "commonImplementation"("org.checkerframework:checker-qual:3.31.0")
 
     // Both the regular test and the compatibility adapter tests require this
-    "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.9.1")
+    "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.9.2")
 
     // Each adapter depends on a specific version of commons-lang3, which will be used to
     // compile the production sources and run the tests, but won't leak to the runtime classpath
