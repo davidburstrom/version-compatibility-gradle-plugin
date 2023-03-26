@@ -3,6 +3,10 @@ plugins {
     id("io.github.davidburstrom.version-compatibility")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
+    this.kotlinOptions.jvmTarget = "1.8"
+}
+
 val latestVersion = "3.12.0"
 
 versionCompatibility {
