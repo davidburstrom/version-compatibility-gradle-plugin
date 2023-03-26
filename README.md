@@ -154,7 +154,8 @@ tasks.named("build").configure {
 In contexts where `'.'` and `'-'` characters are illegal, they will be replaced with `"Dot"` and `"Dash"` respectively.
 
 ## Releases
-
+* 0.5.0
+  * Changed: Example uses Gradle toolchains to run JDK compatibility tests
 * 0.4.0
   * Added: A "compileAndTestOnly" configuration that helps reduce duplication when writing adapter tests
   * Added: Example for multidimensional compatibility tests

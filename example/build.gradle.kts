@@ -24,14 +24,14 @@ versionCompatibility {
             }
 
             // Shows that it is possible to add a test matrix, where the test task can be
-            // wired up to run against a given release of Java (though not implemented here).
+            // wired up to run against a given release of Java, using Gradle toolchains
             register("Java") {
-                versions.set(listOf("1.8", "11"))
+                versions.set(listOf("8", "11", "17"))
             }
         }
 
         eachTestRuntimeOnly {
-            val (commonsLangVersion, javaVersion) = versions
+            val (commonsLangVersion, _) = versions
             addConstraint("org.apache.commons:commons-lang3:$commonsLangVersion!!")
         }
 
@@ -39,6 +39,11 @@ versionCompatibility {
         eachTestTask {
             val (commonsLangVersion, javaVersion) = versions
             testTask.systemProperty("COMMONS_LANG_VERSION", commonsLangVersion)
+            testTask.javaLauncher.set(
+                javaToolchains.launcherFor {
+                    languageVersion.set(JavaLanguageVersion.of(javaVersion))
+                }
+            )
         }
     }
 }
