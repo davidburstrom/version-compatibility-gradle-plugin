@@ -26,7 +26,7 @@ This means that there's a need for an adapter for version 1.0 and 3.0:
 
 ```kotlin
 plugins {
-    id("io.github.davidburstrom.version-compatibility") version "0.4.0"
+    id("io.github.davidburstrom.version-compatibility") version "0.5.0"
 }
 
 versionCompatibility {
@@ -106,7 +106,7 @@ and `testCompatibilityWithMyDependency3Dot0` respectively.
 
 ```kotlin
 plugins {
-    id("io.github.davidburstrom.version-compatibility") version "0.4.0"
+    id("io.github.davidburstrom.version-compatibility") version "0.5.0"
 }
 
 versionCompatibility {
