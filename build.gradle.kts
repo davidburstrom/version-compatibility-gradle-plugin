@@ -31,7 +31,7 @@ allprojects {
         configure<SpotlessExtension> {
             if (plugins.hasPlugin(JavaPlugin::class.java)) {
                 java {
-                    googleJavaFormat("1.7")
+                    googleJavaFormat("1.16.0")
                     licenseHeaderFile(rootProject.file("config/license-header.txt"))
                 }
             }
