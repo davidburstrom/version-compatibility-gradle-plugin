@@ -5,6 +5,26 @@ import info.solidsoft.gradle.pitest.PitestTask
 plugins {
     id("com.diffplug.spotless") version "6.17.0" apply false
     id("info.solidsoft.pitest") version "1.9.11" apply false
+    // held back because dependencyUpdates is resolved incorrectly in 0.46.0
+    id("com.github.ben-manes.versions") version "0.45.0"
+}
+
+val googleJavaFormatVersion = "1.16.0"
+val ktlintVersion = "0.47.1"
+val pitestJUnit5PluginVersion = "1.1.0"
+val pitestMainVersion = "1.10.3"
+val pmdVersion = "6.51.0"
+
+configurations {
+    register("dependencyUpdates")
+}
+
+dependencies {
+    "dependencyUpdates"("com.google.googlejavaformat:google-java-format:$googleJavaFormatVersion")
+    "dependencyUpdates"("com.pinterest.ktlint:ktlint-core:$ktlintVersion")
+    "dependencyUpdates"("org.pitest:pitest-junit5-plugin:$pitestJUnit5PluginVersion")
+    "dependencyUpdates"("org.pitest:pitest:$pitestMainVersion")
+    "dependencyUpdates"("net.sourceforge.pmd:pmd-core:$pmdVersion")
 }
 
 apply(plugin = "com.diffplug.spotless")
@@ -12,11 +32,11 @@ configure<SpotlessExtension> {
 
     kotlin {
         target("**/*.kt")
-        ktlint("0.47.1")
+        ktlint(ktlintVersion)
     }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktlint("0.47.1")
+        ktlint(ktlintVersion)
     }
 }
 
@@ -31,7 +51,7 @@ allprojects {
         configure<SpotlessExtension> {
             if (plugins.hasPlugin(JavaPlugin::class.java)) {
                 java {
-                    googleJavaFormat("1.16.0")
+                    googleJavaFormat(googleJavaFormatVersion)
                     licenseHeaderFile(rootProject.file("config/license-header.txt"))
                 }
             }
@@ -50,7 +70,7 @@ allprojects {
 
             apply(plugin = "pmd")
             configure<PmdExtension> {
-                toolVersion = "6.52.0"
+                toolVersion = pmdVersion
                 isConsoleOutput = true
                 /* Disable default rules and provide specific ones. */
                 ruleSets = listOf()
@@ -59,8 +79,8 @@ allprojects {
 
             apply(plugin = "info.solidsoft.pitest")
             configure<PitestPluginExtension> {
-                pitestVersion.set("1.10.3")
-                junit5PluginVersion.set("1.1.0")
+                pitestVersion.set(pitestMainVersion)
+                junit5PluginVersion.set(pitestJUnit5PluginVersion)
                 timestampedReports.set(false)
                 targetClasses.set(
                     setOf(
