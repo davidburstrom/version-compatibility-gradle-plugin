@@ -18,9 +18,10 @@ package io.github.davidburstrom.gradle.versioncompatibility;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.Test;
@@ -125,10 +126,9 @@ class VersionCompatibilityPluginFunctionalTest {
     assertTrue(result.getOutput().contains("Task :testCompatibilityWithDummy0Dot1"));
   }
 
-  @SuppressWarnings("PMD.AvoidFileStream")
   private void writeString(File file, String string) throws IOException {
     file.getParentFile().mkdirs();
-    try (Writer writer = new FileWriter(file)) {
+    try (Writer writer = Files.newBufferedWriter(file.toPath(), Charset.defaultCharset())) {
       writer.write(string);
     }
   }

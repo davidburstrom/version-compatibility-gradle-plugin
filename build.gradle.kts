@@ -7,8 +7,10 @@ plugins {
     id("info.solidsoft.pitest") version "1.9.11" apply false
     // held back because dependencyUpdates is resolved incorrectly in 0.46.0
     id("com.github.ben-manes.versions") version "0.45.0"
+    id("net.ltgt.errorprone") version "3.0.1" apply false
 }
 
+val errorProneVersion = "2.18.0"
 val googleJavaFormatVersion = "1.16.0"
 // held back because it seems to be nigh impossible to disable the trailing-comma-on-call-site rule
 val ktlintVersion = "0.47.1"
@@ -21,6 +23,7 @@ configurations {
 }
 
 dependencies {
+    "dependencyUpdates"("com.google.errorprone:error_prone_core:$errorProneVersion")
     "dependencyUpdates"("com.google.googlejavaformat:google-java-format:$googleJavaFormatVersion")
     "dependencyUpdates"("com.pinterest.ktlint:ktlint-core:$ktlintVersion")
     "dependencyUpdates"("org.pitest:pitest-junit5-plugin:$pitestJUnit5PluginVersion")
@@ -72,8 +75,15 @@ allprojects {
         if (plugins.hasPlugin(JavaPlugin::class.java)) {
             tasks.withType(JavaCompile::class).configureEach {
                 options.release.set(8)
+                options.compilerArgs.add("-Werror")
             }
 
+            apply(plugin = "net.ltgt.errorprone")
+            dependencies {
+                "errorprone"(
+                    "com.google.errorprone:error_prone_core:$errorProneVersion"
+                )
+            }
             apply(plugin = "pmd")
             configure<PmdExtension> {
                 toolVersion = pmdVersion

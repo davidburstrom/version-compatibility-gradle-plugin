@@ -27,7 +27,7 @@ public class Main {
 
   static {
     String version = loadVersion();
-    final int minor = Integer.parseInt(version.split("\\.")[1]);
+    final int minor = Integer.parseInt(version.split("\\.", -1)[1]);
     if (minor >= 10) {
       COMPAT_ARRAY_UTILS = new CompatArrayUtils3Dot10();
       KOMPAT_ARRAY_UTILS = new KompatArrayUtils3Dot10();
