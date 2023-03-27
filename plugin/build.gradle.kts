@@ -38,11 +38,22 @@ versionCompatibility {
             register("Gradle") {
                 versions.set(listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0.2"))
             }
+            register("Java") {
+                versions.set(listOf("8", "11", "17"))
+            }
         }
         testSourceSetName.set("functionalTest")
         eachTestTask {
-            val gradleVersion = GradleVersion.version(versions[0])
-            testTask.systemProperty("GRADLE_VERSION", gradleVersion.version)
+            val (gradleVersion, javaVersion) = versions
+            testTask.systemProperty("GRADLE_VERSION", gradleVersion)
+            testTask.javaLauncher.set(
+                javaToolchains.launcherFor {
+                    languageVersion.set(JavaLanguageVersion.of(javaVersion))
+                }
+            )
+            if (gradleVersion == "7.0" || gradleVersion == "7.1") {
+                testTask.enabled = false
+            }
         }
     }
 }
