@@ -26,6 +26,11 @@ dependencies {
     "dependencyUpdates"("org.pitest:pitest:$pitestMainVersion")
     "dependencyUpdates"("net.sourceforge.pmd:pmd-core:$pmdVersion")
 }
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>().configureEach {
+    rejectVersionIf {
+        setOf("rc", "alpha", "beta").any { candidate.version.contains(it, ignoreCase = true) }
+    }
+}
 
 apply(plugin = "com.diffplug.spotless")
 configure<SpotlessExtension> {
