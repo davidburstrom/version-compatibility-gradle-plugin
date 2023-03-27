@@ -10,6 +10,7 @@ plugins {
 }
 
 val googleJavaFormatVersion = "1.16.0"
+// held back because it seems to be nigh impossible to disable the trailing-comma-on-call-site rule
 val ktlintVersion = "0.47.1"
 val pitestJUnit5PluginVersion = "1.1.2"
 val pitestMainVersion = "1.11.6"
