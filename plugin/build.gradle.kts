@@ -51,7 +51,7 @@ versionCompatibility {
                     languageVersion.set(JavaLanguageVersion.of(javaVersion))
                 }
             )
-            if (gradleVersion == "7.0" || gradleVersion == "7.1") {
+            if ((gradleVersion == "7.0" || gradleVersion == "7.1") && javaVersion == "17") {
                 testTask.enabled = false
             }
         }
