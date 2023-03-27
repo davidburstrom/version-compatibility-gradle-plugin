@@ -146,16 +146,28 @@ allprojects {
     }
 }
 
-val verifyVersion = tasks.register("verifyVersion") {
-    doLast {
-        if (!(version as String).endsWith("-SNAPSHOT")) {
-            project.file("README.md").readLines()
-                .filter { "version-compatibility" in it && "\"${project.version}\"" !in it }
+open class VersionVerifier : DefaultTask() {
+    @Input
+    lateinit var version: String
+
+    @InputFile
+    lateinit var readme: File
+
+    @TaskAction
+    fun verify() {
+        if (!version.endsWith("-SNAPSHOT")) {
+            readme.readLines()
+                .filter { "version-compatibility" in it && "\"$version\"" !in it }
                 .forEach {
-                    throw GradleException("Outdated version in README.md, could not find ${project.version} in $it")
+                    throw GradleException("Outdated version in README.md, could not find $version in $it")
                 }
         }
     }
+}
+
+val verifyVersion = tasks.register("verifyVersion", VersionVerifier::class.java) {
+    version = project.version.toString()
+    readme = project.file("README.md")
 }
 
 tasks.named("build").configure {
