@@ -15,6 +15,8 @@
  */
 package io.github.davidburstrom.gradle.versioncompatibility;
 
+import java.util.List;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
@@ -31,6 +33,18 @@ public interface TestsConfig {
    * @return the dimension configurations.
    */
   NamedDomainObjectContainer<DimensionConfig> getDimensions();
+
+  /**
+   * Registers a predicate to indicate which version combinations to retain.
+   *
+   * <p>If the predicate returns {@code false}, the combination will be removed. This is useful to
+   * limit configurations, tasks, etc., in order to preserve system resources.
+   *
+   * <p>Multiple predicates can be registered, and will be applied in order of registration.
+   *
+   * @param versionTuplePredicate the predicate to be registered.
+   */
+  void filter(Predicate<List<String>> versionTuplePredicate);
 
   /**
    * Gets the property to configure the test source set name that the compatibility test should run

@@ -370,6 +370,34 @@ class VersionCompatibilityPluginTest {
   }
 
   @Test
+  void versionsCanBeFiltered() {
+    Project project = ProjectBuilder.builder().build();
+    project.getPlugins().apply("java-library");
+    project.getPlugins().apply("io.github.davidburstrom.version-compatibility");
+
+    final VersionCompatibilityExtension extension =
+        project.getExtensions().getByType(VersionCompatibilityExtension.class);
+    extension.tests(
+        compatibilityTestConfig -> {
+          compatibilityTestConfig
+              .getDimensions()
+              .register("dimA", dc -> dc.getVersions().addAll("1.0", "2.0"));
+          compatibilityTestConfig
+              .getDimensions()
+              .register("dimB", dc -> dc.getVersions().addAll("3.0", "4.0"));
+          compatibilityTestConfig.filter(versionTuple -> versionTuple.get(0).equals("2.0"));
+        });
+    assertThat(project.getTasks().findByName("testCompatibilityWithDimA1Dot0AndDimB3Dot0"))
+        .isNull();
+    assertThat(project.getTasks().findByName("testCompatibilityWithDimA1Dot0AndDimB4Dot0"))
+        .isNull();
+    assertThat(project.getTasks().findByName("testCompatibilityWithDimA2Dot0AndDimB3Dot0"))
+        .isNotNull();
+    assertThat(project.getTasks().findByName("testCompatibilityWithDimA2Dot0AndDimB4Dot0"))
+        .isNotNull();
+  }
+
+  @Test
   void configurationsHaveCorrectResolutionSettings() {
     Project project = ProjectBuilder.builder().build();
     project.getPlugins().apply("java-library");

@@ -135,7 +135,8 @@ The compatibility tests can be run just like normal tests in IntelliJ.
 In case there are multiple dimensions, e.g. if the test suite should run against different versions
 of the JDK and the dependency, just add another `dimensions.register()` call. The plugin will generate
 test tasks for each tuple in the Cartesian product of the registered dimensions. See the `example`
-project for more details.
+project for more details. The tuples can be filtered in case they for some reason don't work,
+for example incompatibility between libraries and JDKs. This saves memory and build time.
 
 ## <a name="lifecycle-tasks"></a>Lifecycle tasks
 
@@ -155,6 +156,7 @@ In contexts where `'.'` and `'-'` characters are illegal, they will be replaced 
 
 ## Releases
 * 0.5.0
+  * Added: Support for filtering version combinations that are dysfunctional
   * Changed: Example uses Gradle toolchains to run JDK compatibility tests
 * 0.4.0
   * Added: A "compileAndTestOnly" configuration that helps reduce duplication when writing adapter tests

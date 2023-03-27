@@ -42,6 +42,9 @@ versionCompatibility {
                 versions.set(listOf("8", "11", "17"))
             }
         }
+        filter { (gradleVersion, javaVersion) ->
+            !(javaVersion == "17" && (gradleVersion == "7.0" || gradleVersion == "7.1"))
+        }
         testSourceSetName.set("functionalTest")
         eachTestTask {
             val (gradleVersion, javaVersion) = versions
@@ -51,9 +54,6 @@ versionCompatibility {
                     languageVersion.set(JavaLanguageVersion.of(javaVersion))
                 }
             )
-            if ((gradleVersion == "7.0" || gradleVersion == "7.1") && javaVersion == "17") {
-                testTask.enabled = false
-            }
         }
     }
 }

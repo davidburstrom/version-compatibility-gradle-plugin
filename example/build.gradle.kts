@@ -34,6 +34,12 @@ versionCompatibility {
             }
         }
 
+        // Let's pretend 3.0 isn't compatible with JDK 17.
+        // The filter can be used to skip task and configuration generation.
+        filter { (commonsLangVersion, javaVersion) ->
+            commonsLangVersion != "3.0" && javaVersion != "17"
+        }
+
         eachTestRuntimeOnly {
             val (commonsLangVersion, _) = versions
             addConstraint("org.apache.commons:commons-lang3:$commonsLangVersion!!")

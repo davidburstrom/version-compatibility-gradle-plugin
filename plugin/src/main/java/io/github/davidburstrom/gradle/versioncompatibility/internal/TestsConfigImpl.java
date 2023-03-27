@@ -20,12 +20,19 @@ import io.github.davidburstrom.gradle.versioncompatibility.TestTaskConfig;
 import io.github.davidburstrom.gradle.versioncompatibility.TestsConfig;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.gradle.api.Action;
 
 public abstract class TestsConfigImpl implements TestsConfig {
+  private final List<Predicate<List<String>>> filterPredicates = new ArrayList<>();
   private final List<Action<TestRuntimeOnlyConfig>> testRuntimeOnlyAction = new ArrayList<>();
   private final List<Action<TestTaskConfig>> eachTestTaskAction = new ArrayList<>();
+
+  @Override
+  public void filter(final Predicate<List<String>> versionTuplePredicate) {
+    filterPredicates.add(versionTuplePredicate);
+  }
 
   @Override
   public void eachTestRuntimeOnly(@Nonnull Action<TestRuntimeOnlyConfig> action) {
@@ -35,6 +42,10 @@ public abstract class TestsConfigImpl implements TestsConfig {
   @Override
   public void eachTestTask(@Nonnull Action<TestTaskConfig> action) {
     eachTestTaskAction.add(action);
+  }
+
+  public List<Predicate<List<String>>> getFilterPredicates() {
+    return filterPredicates;
   }
 
   @Nonnull

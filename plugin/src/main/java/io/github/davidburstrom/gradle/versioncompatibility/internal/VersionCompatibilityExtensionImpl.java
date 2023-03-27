@@ -21,6 +21,7 @@ import io.github.davidburstrom.gradle.versioncompatibility.TestsConfig;
 import io.github.davidburstrom.gradle.versioncompatibility.VersionCompatibilityExtension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -305,7 +306,19 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
                         .collect(Collectors.toList()))
             .collect(Collectors.toList());
 
-    final List<List<NamedVersion>> combinedVersions = cartesianProduct(dimensionedNamedVersions);
+    List<Predicate<List<String>>> filterPredicates = testConfigHandler.getFilterPredicates();
+
+    final List<List<NamedVersion>> allCombinedVersions = cartesianProduct(dimensionedNamedVersions);
+
+    final List<List<NamedVersion>> combinedVersions =
+        allCombinedVersions.stream()
+            .filter(
+                it -> {
+                  List<String> versionTuple =
+                      it.stream().map(NamedVersion::getVersion).collect(Collectors.toList());
+                  return filterPredicates.stream().allMatch(filter -> filter.test(versionTuple));
+                })
+            .collect(Collectors.toList());
 
     for (List<NamedVersion> combinedVersion : combinedVersions) {
       String fullName =
