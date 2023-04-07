@@ -36,7 +36,10 @@ versionCompatibility {
     tests {
         dimensions {
             register("Gradle") {
-                versions.set(listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0.2"))
+                versions.set(listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0.2", "8.1-rc-3"))
+                if (GradleVersion.current().version !in versions.get()) {
+                    throw GradleException("Could not find ${gradle.gradleVersion} in the compatibility test versions")
+                }
             }
             register("Java") {
                 versions.set(listOf("8", "11", "17"))
