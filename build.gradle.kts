@@ -7,7 +7,7 @@ plugins {
     id("info.solidsoft.pitest") version "1.9.11" apply false
     // held back because dependencyUpdates is resolved incorrectly in 0.46.0
     id("com.github.ben-manes.versions") version "0.45.0"
-    id("net.ltgt.errorprone") version "3.0.1" apply false
+    id("net.ltgt.errorprone") version "3.1.0" apply false
 }
 
 val errorProneVersion = "2.18.0"
