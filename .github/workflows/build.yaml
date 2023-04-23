@@ -23,5 +23,5 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          arguments: build --no-configuration-cache
+          arguments: build --no-configuration-cache --no-daemon --stacktrace
 
