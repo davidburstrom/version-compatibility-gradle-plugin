@@ -10,7 +10,7 @@ plugins {
     id("net.ltgt.errorprone") version "3.1.0" apply false
 }
 
-val errorProneVersion = "2.18.0"
+val errorProneVersion = "2.19.1"
 val googleJavaFormatVersion = "1.16.0"
 // held back because it seems to be nigh impossible to disable the trailing-comma-on-call-site rule
 val ktlintVersion = "0.47.1"
