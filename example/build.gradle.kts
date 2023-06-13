@@ -12,25 +12,23 @@ val latestVersion = "3.12.0"
 versionCompatibility {
     adapters {
         namespaces.create("Lang") {
-            versions.set(listOf("3.0", "3.5", "3.10"))
+            versions = listOf("3.0", "3.5", "3.10")
         }
     }
 
     tests {
         dimensions {
             register("CommonsLang") {
-                versions.set(
-                    listOf(
-                        "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
-                        "3.10", "3.11", "3.12.0"
-                    )
+                versions = listOf(
+                    "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
+                    "3.10", "3.11", "3.12.0"
                 )
             }
 
             // Shows that it is possible to add a test matrix, where the test task can be
             // wired up to run against a given release of Java, using Gradle toolchains
             register("Java") {
-                versions.set(listOf("8", "11", "17"))
+                versions = listOf("8", "11", "17")
             }
         }
 
@@ -49,11 +47,9 @@ versionCompatibility {
         eachTestTask {
             val (commonsLangVersion, javaVersion) = versions
             testTask.systemProperty("COMMONS_LANG_VERSION", commonsLangVersion)
-            testTask.javaLauncher.set(
-                javaToolchains.launcherFor {
-                    languageVersion.set(JavaLanguageVersion.of(javaVersion))
-                }
-            )
+            testTask.javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(javaVersion)
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ allprojects {
 
         if (plugins.hasPlugin(JavaPlugin::class.java)) {
             tasks.withType(JavaCompile::class).configureEach {
-                options.release.set(8)
+                options.release = 8
                 options.compilerArgs.add("-Werror")
             }
 
@@ -95,20 +95,18 @@ allprojects {
 
             apply(plugin = "info.solidsoft.pitest")
             configure<PitestPluginExtension> {
-                pitestVersion.set(pitestMainVersion)
-                junit5PluginVersion.set(pitestJUnit5PluginVersion)
-                timestampedReports.set(false)
-                targetClasses.set(
-                    setOf(
-                        "example.*",
-                        "io.github.davidburstrom.gradle.versioncompatibility.*"
-                    )
+                pitestVersion = pitestMainVersion
+                junit5PluginVersion = pitestJUnit5PluginVersion
+                timestampedReports = false
+                targetClasses = setOf(
+                    "example.*",
+                    "io.github.davidburstrom.gradle.versioncompatibility.*"
                 )
-                threads.set(2)
-                failWhenNoMutations.set(true)
-                mutators.set(listOf("DEFAULTS"))
-                useClasspathFile.set(true)
-                mutationThreshold.set(100)
+                threads = 2
+                failWhenNoMutations = true
+                mutators = listOf("DEFAULTS")
+                useClasspathFile = true
+                mutationThreshold = 100
                 if (JavaVersion.current() >= JavaVersion.VERSION_17) {
                     jvmArgs.addAll(
                         "--add-opens=java.base/java.lang=ALL-UNNAMED",

@@ -32,7 +32,7 @@ plugins {
 versionCompatibility {
     adapters {
         namespaces.register("Dep") {
-            versions.set(listOf("1.0", "3.0"))
+            versions = listOf("1.0", "3.0")
         }
     }
 }
@@ -112,7 +112,7 @@ plugins {
 versionCompatibility {
     tests {
         dimensions.register("myDependency") {
-            versions.set(listOf("1.0", "2.0", "3.0"))
+            versions = listOf("1.0", "2.0", "3.0")
         }
         eachTestRuntimeOnly {
             addConstraint("my.dependency:dependency:${versions[0]}!!")
