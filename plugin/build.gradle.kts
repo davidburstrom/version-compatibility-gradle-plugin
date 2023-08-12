@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0-M1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("com.google.truth:truth:1.1.5")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0-M1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")
 }
 
 gradlePlugin {
