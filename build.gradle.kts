@@ -12,8 +12,7 @@ plugins {
 
 val errorProneVersion = "2.20.0"
 val googleJavaFormatVersion = "1.17.0"
-// held back because it seems to be nigh impossible to disable the trailing-comma-on-call-site rule
-val ktlintVersion = "0.47.1"
+val ktlintVersion = "0.50.0"
 val pitestJUnit5PluginVersion = "1.2.0"
 val pitestMainVersion = "1.14.3"
 val pmdVersion = "6.55.0"
@@ -41,11 +40,11 @@ configure<SpotlessExtension> {
 
     kotlin {
         target("**/*.kt")
-        ktlint(ktlintVersion)
+        ktlint(ktlintVersion).editorConfigOverride(mapOf("ktlint_standard_trailing-comma-on-call-site" to "disabled"))
     }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktlint(ktlintVersion)
+        ktlint(ktlintVersion).editorConfigOverride(mapOf("ktlint_standard_trailing-comma-on-call-site" to "disabled"))
     }
 }
 
