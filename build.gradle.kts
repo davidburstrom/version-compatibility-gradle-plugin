@@ -24,7 +24,7 @@ configurations {
 dependencies {
     "dependencyUpdates"("com.google.errorprone:error_prone_core:$errorProneVersion")
     "dependencyUpdates"("com.google.googlejavaformat:google-java-format:$googleJavaFormatVersion")
-    "dependencyUpdates"("com.pinterest.ktlint:ktlint-core:$ktlintVersion")
+    "dependencyUpdates"("com.pinterest.ktlint:ktlint-bom:$ktlintVersion")
     "dependencyUpdates"("org.pitest:pitest-junit5-plugin:$pitestJUnit5PluginVersion")
     "dependencyUpdates"("org.pitest:pitest:$pitestMainVersion")
     "dependencyUpdates"("net.sourceforge.pmd:pmd-core:$pmdVersion")
