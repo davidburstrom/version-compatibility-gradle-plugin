@@ -16,7 +16,7 @@ gradlePlugin {
 
 val syncSources by tasks.registering(Sync::class) {
     from(File(project.projectDir, "../plugin/src/main/java"))
-    into(File(project.buildDir, "generated/plugin-src"))
+    into(project.layout.buildDirectory.dir("generated/plugin-src"))
 }
 
 sourceSets["main"].java.setSrcDirs(listOf(syncSources))
