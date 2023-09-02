@@ -5,8 +5,7 @@ import info.solidsoft.gradle.pitest.PitestTask
 plugins {
     id("com.diffplug.spotless") version "6.21.0" apply false
     id("info.solidsoft.pitest") version "1.9.11" apply false
-    // held back because dependencyUpdates fails to resolve latest versions in 0.47.0
-    id("com.github.ben-manes.versions") version "0.45.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
     id("net.ltgt.errorprone") version "3.1.0" apply false
 }
 
