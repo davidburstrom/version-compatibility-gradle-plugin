@@ -37,7 +37,7 @@ versionCompatibility {
     tests {
         dimensions {
             register("Gradle") {
-                versions = listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0.2", "8.1.1", "8.2.1", "8.3")
+                versions = listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6", "8.0.2", "8.1.1", "8.2.1", "8.3", "8.4-rc-3")
                 if (GradleVersion.current().version !in versions.get()) {
                     throw GradleException("Could not find ${gradle.gradleVersion} in the compatibility test versions")
                 }
