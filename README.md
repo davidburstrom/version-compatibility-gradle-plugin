@@ -180,6 +180,7 @@ Copyright 2022-2023 David Burström.
 ## Acknowledgements
 
 * Erik Ghonyan, for improvements to the documentation.
+* [@Goooler](https://github.com/Goooler), for helping keeping the project up to date.
 
 ## Future improvements
 
