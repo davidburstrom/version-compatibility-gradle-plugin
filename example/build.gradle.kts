@@ -63,9 +63,9 @@ dependencies {
 
     // Each adapter depends on a specific version of commons-lang3, which will be used to
     // compile the production sources and run the tests, but won't leak to the runtime classpath
-    "compatLang3Dot0CompileAndTestOnly"("org.apache.commons:commons-lang3:3.0")
-    "compatLang3Dot5CompileAndTestOnly"("org.apache.commons:commons-lang3:3.5")
-    "compatLang3Dot10CompileAndTestOnly"("org.apache.commons:commons-lang3:3.10")
+    "compatLang3Dot0CompileAndTestOnly"("org.apache.commons:commons-lang3:3.13.0")
+    "compatLang3Dot5CompileAndTestOnly"("org.apache.commons:commons-lang3:3.13.0")
+    "compatLang3Dot10CompileAndTestOnly"("org.apache.commons:commons-lang3:3.13.0")
 
     // Use latestVersion if no other dependency constraint exists, but nothing less than 3.0.
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")
