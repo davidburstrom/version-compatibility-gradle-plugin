@@ -4,6 +4,6 @@
     "config:base"
   ],
   "ignoreDeps": [
-    ["org.apache.commons:commons-lang3"]
+    "org.apache.commons:commons-lang3"
   ]
 }
