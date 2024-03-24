@@ -434,7 +434,7 @@ public class VersionCompatibilityExtensionImpl implements VersionCompatibilityEx
       List<List<T>> remainingLists = cartesianProduct(lists.subList(1, lists.size()));
       for (T condition : firstList) {
         for (List<T> remainingList : remainingLists) {
-          ArrayList<T> resultList = new ArrayList<>();
+          List<T> resultList = new ArrayList<>();
           resultList.add(condition);
           resultList.addAll(remainingList);
           resultLists.add(resultList);
