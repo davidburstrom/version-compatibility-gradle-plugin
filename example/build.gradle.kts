@@ -4,7 +4,7 @@ plugins {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
-    this.kotlinOptions.jvmTarget = "1.8"
+    compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
 }
 
 val latestVersion = "3.12.0"

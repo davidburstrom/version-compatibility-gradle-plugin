@@ -7,6 +7,9 @@ build
 # Ignore IntelliJ project metadata
 .idea
 
+# Ignore Kotlin temporary files
+.kotlin
+
 # Ignore macOS files
 .DS_Store
 
