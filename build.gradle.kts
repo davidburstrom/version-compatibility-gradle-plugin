@@ -71,6 +71,14 @@ allprojects {
         }
 
         if (plugins.hasPlugin(JavaPlugin::class.java)) {
+            configure<JavaPluginExtension> {
+                toolchain {
+                    // Could theoretically be version 8, but it's not compatible with
+                    // ErrorProne. Therefore, the JavaCompile release option is used.
+                    languageVersion = JavaLanguageVersion.of(11)
+                }
+            }
+
             tasks.withType(JavaCompile::class).configureEach {
                 options.release = 8
                 options.compilerArgs.add("-Werror")
