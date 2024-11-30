@@ -13,7 +13,7 @@ val errorProneVersion = "2.36.0"
 val googleJavaFormatVersion = "1.25.0"
 val ktlintVersion = "1.4.1"
 val pitestJUnit5PluginVersion = "1.2.1"
-val pitestMainVersion = "1.17.1"
+val pitestMainVersion = "1.17.2"
 val pmdVersion = "7.7.0"
 
 configurations {
