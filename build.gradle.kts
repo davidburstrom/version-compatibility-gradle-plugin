@@ -14,7 +14,7 @@ val googleJavaFormatVersion = "1.25.2"
 val ktlintVersion = "1.5.0"
 val pitestJUnit5PluginVersion = "1.2.2"
 val pitestMainVersion = "1.18.2"
-val pmdVersion = "7.10.0"
+val pmdVersion = "7.11.0"
 
 configurations {
     register("dependencyUpdates")
