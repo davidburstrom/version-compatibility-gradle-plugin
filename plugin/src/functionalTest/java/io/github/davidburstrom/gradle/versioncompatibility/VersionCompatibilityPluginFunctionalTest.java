@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /** A simple functional test for the 'io.github.davidburstrom.version-compatibility' plugin. */
+@SuppressWarnings("StringConcatToTextBlock")
 class VersionCompatibilityPluginFunctionalTest {
   @TempDir File projectDir;
 
