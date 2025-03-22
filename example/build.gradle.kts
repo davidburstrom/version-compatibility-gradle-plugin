@@ -70,8 +70,8 @@ dependencies {
     // Use latestVersion if no other dependency constraint exists, but nothing less than 3.0.
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")
 
-    // Required for mutation testing
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.1")
+    // Required for mutation testing and JUnit 5.12 and later
+    "testCommonRuntimeOnly"("org.junit.platform:junit-platform-launcher:1.12.1")
 }
 
 tasks.withType<Test>().configureEach {
