@@ -17,6 +17,7 @@ package io.github.davidburstrom.gradle.versioncompatibility;
 
 import org.gradle.api.NamedDomainObjectContainer;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface AdaptersConfig {
 
   /**
