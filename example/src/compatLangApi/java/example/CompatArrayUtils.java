@@ -17,6 +17,7 @@ package example;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface CompatArrayUtils {
 
   byte[] removeAllOccurrences(byte @NonNull [] array, byte element);

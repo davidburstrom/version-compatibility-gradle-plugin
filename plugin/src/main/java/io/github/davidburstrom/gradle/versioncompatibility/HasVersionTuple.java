@@ -19,6 +19,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 /** Indicates that the object has an n-dimensional version tuple, for n &gt;= 1. */
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface HasVersionTuple {
   /**
    * Returns a list of versions, one per dimension in the matrix of compatibility tests, in the
