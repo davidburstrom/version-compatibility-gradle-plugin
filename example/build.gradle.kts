@@ -56,7 +56,7 @@ versionCompatibility {
 
 dependencies {
     // This is a dependency used by all adapters
-    "commonImplementation"("org.checkerframework:checker-qual:3.49.1")
+    "commonImplementation"("org.checkerframework:checker-qual:3.49.2")
 
     // Both the regular test and the compatibility adapter tests require this
     "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.12.1")
