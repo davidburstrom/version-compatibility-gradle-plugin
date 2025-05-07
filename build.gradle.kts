@@ -10,7 +10,7 @@ plugins {
 }
 
 val errorProneVersion = "2.38.0"
-val googleJavaFormatVersion = "1.26.0"
+val googleJavaFormatVersion = "1.27.0"
 val ktlintVersion = "1.5.0"
 val pitestJUnit5PluginVersion = "1.2.2"
 val pitestMainVersion = "1.19.1"
