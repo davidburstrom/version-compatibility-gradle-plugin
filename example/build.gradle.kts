@@ -71,7 +71,7 @@ dependencies {
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")
 
     // Required for mutation testing and JUnit 5.12 and later
-    "testCommonRuntimeOnly"("org.junit.platform:junit-platform-launcher:1.13.0")
+    "testCommonRuntimeOnly"("org.junit.platform:junit-platform-launcher:1.13.2")
 }
 
 tasks.withType<Test>().configureEach {
