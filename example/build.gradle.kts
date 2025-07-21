@@ -59,7 +59,7 @@ dependencies {
     "commonImplementation"("org.checkerframework:checker-qual:3.49.3")
 
     // Both the regular test and the compatibility adapter tests require this
-    "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.13.0")
+    "testCommonImplementation"("org.junit.jupiter:junit-jupiter:5.13.4")
 
     // Each adapter depends on a specific version of commons-lang3, which will be used to
     // compile the production sources and run the tests, but won't leak to the runtime classpath
@@ -71,7 +71,7 @@ dependencies {
     testImplementation("org.apache.commons:commons-lang3:[3.0,)!!$latestVersion")
 
     // Required for mutation testing and JUnit 5.12 and later
-    "testCommonRuntimeOnly"("org.junit.platform:junit-platform-launcher:1.13.0")
+    "testCommonRuntimeOnly"("org.junit.platform:junit-platform-launcher:1.13.4")
 }
 
 tasks.withType<Test>().configureEach {
