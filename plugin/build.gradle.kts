@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.14.3")
-    testImplementation("com.google.truth:truth:1.4.4")
+    testImplementation("com.google.truth:truth:1.4.5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.3")
 }
 
