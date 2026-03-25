@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.1.1"
     id("io.github.davidburstrom.version-compatibility")
     signing
 }
