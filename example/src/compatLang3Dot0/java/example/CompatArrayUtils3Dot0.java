@@ -31,7 +31,8 @@ public class CompatArrayUtils3Dot0 implements CompatArrayUtils {
     int j = 0;
     for (final byte b : array) {
       if (b != element) {
-        result[j++] = b;
+        result[j] = b;
+        j++;
       }
     }
     return result;
