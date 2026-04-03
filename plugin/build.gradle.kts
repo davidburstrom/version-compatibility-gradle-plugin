@@ -8,6 +8,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.14.3")
     testImplementation("com.google.truth:truth:1.4.5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.3")
+    testImplementation(gradleTestKit())
 }
 
 gradlePlugin {
@@ -38,7 +39,9 @@ versionCompatibility {
     tests {
         dimensions {
             register("Gradle") {
-                versions = listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6.3", "8.0.2", "8.1.1", "8.2.1", "8.3", "8.4", "8.5", "8.6", "8.7", "8.8", "8.9", "8.10.2", "8.11.1", "8.12.1", "8.13", "8.14.4")
+                versions = listOf("7.0", "7.1", "7.2", "7.3", "7.4", "7.5.1", "7.6.3") +
+                    listOf("8.0.2", "8.1.1", "8.2.1", "8.3", "8.4", "8.5", "8.6", "8.7", "8.8", "8.9", "8.10.2", "8.11.1", "8.12.1", "8.13", "8.14.4") +
+                    listOf("9.0.0", "9.1.0", "9.2.1", "9.3.1", "9.4.1")
                 if (GradleVersion.current().version !in versions.get()) {
                     throw GradleException("Could not find ${gradle.gradleVersion} in the compatibility test versions")
                 }
@@ -48,7 +51,8 @@ versionCompatibility {
             }
         }
         filter { (gradleVersion, javaVersion) ->
-            !(javaVersion == "17" && (gradleVersion == "7.0" || gradleVersion == "7.1"))
+            !(javaVersion == "17" && (gradleVersion == "7.0" || gradleVersion == "7.1")) &&
+                !((javaVersion == "11" || javaVersion == "8") && gradleVersion.startsWith("9."))
         }
         testSourceSetName = "functionalTest"
         eachTestTask {

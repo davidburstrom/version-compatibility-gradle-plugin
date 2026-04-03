@@ -105,6 +105,12 @@ class VersionCompatibilityPluginFunctionalTest {
             + "  tests {\n"
             + "    dimensions.register(\"dummy\") { versions.set(listOf(\"0.1\")) }\n"
             + "  }\n"
+            // language=none
+            + (System.getProperty("GRADLE_VERSION") == null
+                    || System.getProperty("GRADLE_VERSION").startsWith("9.")
+                // language=kotlin
+                ? "tasks.withType<Test> {\n" + "    failOnNoDiscoveredTests=false\n" + "}\n"
+                : "")
             + "}");
     writeString(new File(projectDir, "src/test/java/Test.java"), "class Test { }");
 
