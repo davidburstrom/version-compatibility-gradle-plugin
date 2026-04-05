@@ -47,12 +47,14 @@ versionCompatibility {
                 }
             }
             register("Java") {
-                versions = listOf("8", "11", "17")
+                versions = listOf("8", "11", "17", "21", "25")
             }
         }
         filter { (gradleVersion, javaVersion) ->
-            !(javaVersion == "17" && (gradleVersion == "7.0" || gradleVersion == "7.1")) &&
-                !((javaVersion == "11" || javaVersion == "8") && gradleVersion.startsWith("9."))
+            !((javaVersion == "11" || javaVersion == "8") && gradleVersion.startsWith("9.")) &&
+                !(javaVersion == "17" && (gradleVersion == "7.0" || gradleVersion == "7.1")) &&
+                !(javaVersion == "21" && (gradleVersion.startsWith("7.") || gradleVersion in listOf("8.0.2", "8.1.1", "8.2.1"))) &&
+                !(javaVersion == "25" && (gradleVersion.startsWith("7.") || gradleVersion.startsWith("8.") || gradleVersion == "9.0.0"))
         }
         testSourceSetName = "functionalTest"
         eachTestTask {
